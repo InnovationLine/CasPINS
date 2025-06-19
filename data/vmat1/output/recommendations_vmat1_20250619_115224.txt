@@ -1,7 +1,16 @@
 PRIMER RECOMMENDATIONS FOR VMAT1
 ============================================================
-Analysis Date: 2025-06-19 11:19:57
+Analysis Date: 2025-06-19 11:52:25
 mRNA length: 1563 bp
+
+CRISPR EDITING EFFICIENCY ANALYSIS:
+------------------------------------------------------------
+Editing Efficiency: 71.1%
+Signal Quality Score: 54.1%
+Sequence Similarity After Cut: 28.9%
+Signal Decay Ratio: -2.294
+
+Interpretation: HIGH editing efficiency detected
 
 
 Guide RNA 1: ACGATAACACCCCCAGTAGA

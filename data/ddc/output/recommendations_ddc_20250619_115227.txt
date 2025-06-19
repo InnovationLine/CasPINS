@@ -1,7 +1,16 @@
 PRIMER RECOMMENDATIONS FOR DDC
 ============================================================
-Analysis Date: 2025-06-19 11:20:02
+Analysis Date: 2025-06-19 11:52:28
 mRNA length: 1440 bp
+
+CRISPR EDITING EFFICIENCY ANALYSIS:
+------------------------------------------------------------
+Editing Efficiency: 73.3%
+Signal Quality Score: 100%
+Sequence Similarity After Cut: 26.7%
+Signal Decay Ratio: -0.299
+
+Interpretation: HIGH editing efficiency detected
 
 
 Guide RNA 1: ACGTCCAGTGTACCCTGACGTGG
