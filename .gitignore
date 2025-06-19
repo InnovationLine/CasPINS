@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+crispr_env/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project specific - Data files
+*.ab1
+*.seq
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
+# Generated output folders
+data/*/output/
+
+# Original data folders (to be removed)
+gRNA/
+Results_1267065/
+2025-06-17_14C_1267196/
+
+# Results folder (except README if exists)
+results/*
+!results/.gitkeep
+!results/README.md
+
+# Sensitive data
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+
+# Temporary files
+*.tmp
+*.bak
+*~
+*.log
+*.swp
+.ipynb_checkpoints/
+
+# Keep these files
+!docs/*.md
+!README.md
+!requirements.txt
+!.gitignore 
