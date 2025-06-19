@@ -371,6 +371,183 @@ def calculate_editing_efficiency(control_seq, control_traces, edited_seq, edited
             'confidence': 'LOW - Fallback method used'
         }
 
+def plot_tide_analysis_with_validation(control_file, edited_file, output_dir, gene_name, expected_cut_site=None):
+    """
+    Create a TIDE-style analysis plot with validation against expected cut site.
+    
+    Args:
+        control_file: Path to control AB1 file
+        edited_file: Path to edited AB1 file
+        output_dir: Output directory
+        gene_name: Gene name
+        expected_cut_site: Expected cut site position based on gRNA location
+    """
+    print(f"\nPerforming TIDE Analysis for {gene_name}...")
+    
+    # Parse both .ab1 files
+    control_seq, control_traces = parse_ab1(control_file)
+    edited_seq, edited_traces = parse_ab1(edited_file)
+    
+    print(f"  Control sequence length: {len(control_seq)} bp")
+    print(f"  Edited sequence length: {len(edited_seq)} bp")
+    
+    # Find where sequences diverge
+    divergence_point = find_divergence_point(control_seq, edited_seq)
+    print(f"  Detected divergence point: position {divergence_point}")
+    
+    # Validate against expected cut site
+    if expected_cut_site:
+        print(f"  Expected cut site from gRNA: position {expected_cut_site}")
+        
+        # Check if divergence is near expected cut site (within 10bp)
+        distance = abs(divergence_point - expected_cut_site)
+        if distance > 10:
+            print(f"  WARNING: Divergence point is {distance}bp away from expected cut site!")
+            print(f"  This may indicate:")
+            print(f"    - The wrong gRNA sequence was provided")
+            print(f"    - The AB1 sequences don't match the mRNA reference")
+            print(f"    - Off-target editing occurred")
+            
+            # Use expected cut site for analysis if divergence is too far
+            if distance > 50:
+                print(f"  Using expected cut site ({expected_cut_site}) for analysis instead of divergence point")
+                analysis_position = expected_cut_site
+            else:
+                print(f"  Using detected divergence point for analysis")
+                analysis_position = divergence_point
+        else:
+            print(f"  ✓ Divergence point matches expected cut site (within {distance}bp)")
+            analysis_position = divergence_point
+    else:
+        # No expected cut site provided, use divergence point
+        analysis_position = divergence_point
+    
+    # Calculate editing efficiency at the validated position
+    efficiency_data = calculate_editing_efficiency(
+        control_seq, control_traces, 
+        edited_seq, edited_traces, 
+        analysis_position
+    )
+    
+    # Add validation info to efficiency data
+    if expected_cut_site:
+        efficiency_data['cut_site_validation'] = {
+            'expected': expected_cut_site,
+            'detected': divergence_point,
+            'distance': abs(divergence_point - expected_cut_site),
+            'validated': abs(divergence_point - expected_cut_site) <= 10
+        }
+    
+    print(f"  Editing efficiency: {efficiency_data['editing_efficiency']}%")
+    print(f"  Quality score: {efficiency_data['quality_score']}%")
+    
+    # Rest of the plotting code remains the same...
+    # Define viewing window
+    window_start = max(0, analysis_position - 50)
+    window_end = min(len(control_seq), analysis_position + 100)
+    
+    # Create the plot
+    fig = plt.figure(figsize=(16, 10))
+    
+    # Colors for each base
+    colors = {'A': 'green', 'C': 'blue', 'G': 'black', 'T': 'red'}
+    
+    # Plot 1: Control chromatogram
+    ax1 = plt.subplot(3, 1, 1)
+    ax1.set_title(f'{gene_name.upper()} - Control Sample (WT) Chromatogram', fontsize=14, fontweight='bold')
+    ax1.set_ylabel('Signal Intensity', fontsize=12)
+    
+    trace_factor = 12
+    trace_start = window_start * trace_factor
+    trace_end = window_end * trace_factor
+    
+    max_signal = 0
+    for base, color in colors.items():
+        if trace_end <= len(control_traces[base]):
+            trace_data = control_traces[base][trace_start:trace_end]
+            x_vals = np.arange(len(trace_data))
+            ax1.plot(x_vals, trace_data, color=color, label=base, alpha=0.8, linewidth=1)
+            if len(trace_data) > 0:
+                max_signal = max(max_signal, np.max(trace_data))
+    
+    cut_trace_pos = (analysis_position - window_start) * trace_factor
+    ax1.axvline(x=cut_trace_pos, color='red', linestyle='--', alpha=0.5, label=f'Cut site (pos {analysis_position})')
+    
+    # If there's a mismatch, show both positions
+    if expected_cut_site and abs(divergence_point - expected_cut_site) > 10:
+        div_trace_pos = (divergence_point - window_start) * trace_factor
+        ax1.axvline(x=div_trace_pos, color='orange', linestyle=':', alpha=0.5, label=f'Divergence (pos {divergence_point})')
+    
+    ax1.legend(loc='upper right')
+    ax1.set_ylim(0, max_signal * 1.1)
+    
+    # Plot 2: Edited chromatogram
+    ax2 = plt.subplot(3, 1, 2)
+    ax2.set_title(f'{gene_name.upper()} - Edited Sample Chromatogram', fontsize=14, fontweight='bold')
+    ax2.set_ylabel('Signal Intensity', fontsize=12)
+    
+    for base, color in colors.items():
+        if trace_end <= len(edited_traces[base]):
+            trace_data = edited_traces[base][trace_start:trace_end]
+            x_vals = np.arange(len(trace_data))
+            ax2.plot(x_vals, trace_data, color=color, label=base, alpha=0.8, linewidth=1)
+    
+    ax2.axvline(x=cut_trace_pos, color='red', linestyle='--', alpha=0.5, label=f'Cut site (pos {analysis_position})')
+    
+    if expected_cut_site and abs(divergence_point - expected_cut_site) > 10:
+        div_trace_pos = (divergence_point - window_start) * trace_factor
+        ax2.axvline(x=div_trace_pos, color='orange', linestyle=':', alpha=0.5, label=f'Divergence (pos {divergence_point})')
+    
+    ax2.legend(loc='upper right')
+    ax2.set_ylim(0, max_signal * 1.1)
+    
+    # Plot 3: Overlay comparison
+    ax3 = plt.subplot(3, 1, 3)
+    ax3.set_title(f'{gene_name.upper()} - Overlay: Control (solid) vs Edited (dashed)', fontsize=14, fontweight='bold')
+    ax3.set_ylabel('Signal Intensity', fontsize=12)
+    ax3.set_xlabel('Trace Position', fontsize=12)
+    
+    # Focus on region around cut site
+    focus_start = max(0, cut_trace_pos - 200)
+    focus_end = min(cut_trace_pos + 400, (window_end - window_start) * trace_factor)
+    
+    for base, color in colors.items():
+        if trace_end <= len(control_traces[base]) and trace_end <= len(edited_traces[base]):
+            try:
+                control_data = control_traces[base][trace_start:trace_end][focus_start:focus_end]
+                edited_data = edited_traces[base][trace_start:trace_end][focus_start:focus_end]
+                
+                if len(control_data) > 0 and len(edited_data) > 0:
+                    x_vals = np.arange(len(control_data))
+                    ax3.plot(x_vals, control_data, color=color, label=f'{base} (WT)', 
+                            alpha=0.7, linewidth=1.5)
+                    ax3.plot(x_vals, edited_data, color=color, linestyle='--', 
+                            alpha=0.7, linewidth=1.5)
+            except:
+                continue
+    
+    ax3.axvline(x=min(200, focus_end-focus_start-10), color='red', linestyle='--', alpha=0.5, label='Cut site')
+    ax3.legend(loc='upper right', ncol=2)
+    ax3.set_ylim(0, max_signal * 1.1)
+    
+    plt.tight_layout()
+    
+    # Create output directory if it doesn't exist
+    output_subdir = os.path.join(output_dir, "output")
+    if not os.path.exists(output_subdir):
+        os.makedirs(output_subdir)
+    
+    # Save the plot with timestamp in output subfolder
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = os.path.join(output_subdir, f"tide_analysis_{gene_name}_{timestamp}.png")
+    plt.savefig(output_file, dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    print(f"  [SUCCESS] Plot saved: {output_file}")
+    
+    return divergence_point, timestamp, efficiency_data
+
+
 def plot_tide_analysis(control_file, edited_file, output_dir, gene_name):
     """Create a TIDE-style analysis plot comparing control and edited samples."""
     print(f"\nPerforming TIDE Analysis for {gene_name}...")
@@ -503,6 +680,22 @@ def analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data=No
     if efficiency_data:
         recommendations.append("CRISPR EDITING EFFICIENCY ANALYSIS:")
         recommendations.append("-" * 60)
+        
+        # Add validation warning if present
+        if 'cut_site_validation' in efficiency_data:
+            validation = efficiency_data['cut_site_validation']
+            if not validation['validated']:
+                recommendations.append("⚠️ WARNING: CUT SITE VALIDATION FAILED!")
+                recommendations.append(f"  Expected cut site (from gRNA): position {validation['expected']}")
+                recommendations.append(f"  Detected divergence point: position {validation['detected']}")
+                recommendations.append(f"  Distance: {validation['distance']} bp")
+                recommendations.append("")
+                recommendations.append("This large discrepancy suggests:")
+                recommendations.append("  • The provided gRNA/mRNA sequences may be incorrect")
+                recommendations.append("  • The AB1 files may be from a different target region")
+                recommendations.append("  • Off-target editing may have occurred")
+                recommendations.append("")
+        
         recommendations.append(f"Editing Efficiency: {efficiency_data['editing_efficiency']}%")
         
         # Add more detailed TIDE results if available
@@ -677,13 +870,97 @@ def process_gene_folder(gene_folder, gene_name):
     
     print(f"  Found {len(grna_sequences)} gRNA sequences")
     
+    # Read mRNA sequence FIRST
+    with open(mrna_file, 'r') as f:
+        mrna_seq = ''.join(line.strip() for line in f).upper().replace(' ', '')
+    
+    # Verify gRNAs are present in the mRNA
+    grna_positions = []
+    expected_cut_sites = []
+    
+    for i, grna in enumerate(grna_sequences, 1):
+        original_grna = grna
+        grna_length = len(grna)
+        
+        # Handle non-standard gRNA lengths
+        if grna_length > 20:
+            print(f"  gRNA {i} is {grna_length}bp (expected 20bp). Checking if it includes PAM...")
+            # Try removing potential PAM sequences (last 3 bases if ends with GG)
+            if grna.endswith('GG') or grna.endswith('CC'):
+                grna_20bp = grna[:20]
+                print(f"    Trying without PAM: {grna_20bp}")
+            else:
+                grna_20bp = grna[:20]
+                print(f"    Trimming to 20bp: {grna_20bp}")
+        elif grna_length < 20:
+            print(f"  WARNING: gRNA {i} is only {grna_length}bp (expected 20bp)")
+            grna_20bp = grna
+        else:
+            grna_20bp = grna
+        
+        # Search for exact match first
+        found = False
+        grna_rc = str(Seq(grna_20bp).reverse_complement())
+        
+        if grna_20bp in mrna_seq:
+            pos = mrna_seq.find(grna_20bp)
+            cut_site = pos + 17  # 3bp before PAM
+            grna_positions.append((pos, 'forward', cut_site))
+            expected_cut_sites.append(cut_site)
+            print(f"  gRNA {i} found on forward strand at position {pos}, cut site: {cut_site}")
+            found = True
+        elif grna_rc in mrna_seq:
+            pos = mrna_seq.find(grna_rc)
+            cut_site = pos + 3
+            grna_positions.append((pos, 'reverse', cut_site))
+            expected_cut_sites.append(cut_site)
+            print(f"  gRNA {i} found on reverse strand at position {pos}, cut site: {cut_site}")
+            found = True
+        
+        # If not found, try partial match (check if part of gRNA is in mRNA)
+        if not found:
+            # Try searching for the gRNA without first base (common off-by-one error)
+            if len(grna_20bp) >= 19:
+                partial_grna = grna_20bp[1:]
+                if partial_grna in mrna_seq:
+                    pos = mrna_seq.find(partial_grna)
+                    print(f"  WARNING: Partial match found (missing first base) at position {pos}")
+                    print(f"    Expected: {grna_20bp}")
+                    print(f"    Found:    {mrna_seq[pos-1:pos+len(partial_grna)]}")
+                    found = True
+            
+            if not found:
+                print(f"  ERROR: gRNA {i} ({original_grna}) not found in mRNA sequence!")
+                print(f"    Searched for: {grna_20bp} and its reverse complement")
+    
+    if not grna_positions:
+        print("  ERROR: No gRNAs found in the mRNA sequence!")
+        print("  Cannot perform TIDE analysis without knowing the expected cut sites.")
+        
+        # Still generate recommendations but with error message
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        recommendations = analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data=None)
+        
+        # Create output directory if it doesn't exist
+        output_subdir = os.path.join(gene_folder, "output")
+        if not os.path.exists(output_subdir):
+            os.makedirs(output_subdir)
+        
+        # Save error recommendations
+        rec_file = os.path.join(output_subdir, f"recommendations_{gene_name}_{timestamp}.txt")
+        with open(rec_file, 'w', encoding='utf-8') as f:
+            f.write(recommendations)
+        
+        print(f"  [ERROR] Analysis failed. Error report saved: {rec_file}")
+        return False
+    
     # Perform TIDE analysis
     try:
-        divergence_point, timestamp, efficiency_data = plot_tide_analysis(control_file, edited_file, gene_folder, gene_name)
-        
-        # Read mRNA sequence
-        with open(mrna_file, 'r') as f:
-            mrna_seq = ''.join(line.strip() for line in f).upper().replace(' ', '')
+        # Use the expected cut site from gRNA position
+        expected_cut_site = expected_cut_sites[0] if expected_cut_sites else None
+        divergence_point, timestamp, efficiency_data = plot_tide_analysis_with_validation(
+            control_file, edited_file, gene_folder, gene_name, expected_cut_site
+        )
         
         # Generate recommendations
         recommendations = analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data)
