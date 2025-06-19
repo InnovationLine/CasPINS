@@ -32,6 +32,86 @@ def find_divergence_point(seq1, seq2):
     
     return min_len // 2
 
+def calculate_editing_efficiency(control_seq, control_traces, edited_seq, edited_traces, cut_position):
+    """
+    Calculate CRISPR editing efficiency by analyzing chromatogram quality.
+    
+    Returns:
+        dict: Contains editing_efficiency (%), signal_decay_ratio, and quality_score
+    """
+    # Define regions for analysis
+    upstream_start = max(0, cut_position - 50)
+    upstream_end = cut_position - 5
+    downstream_start = cut_position + 5
+    downstream_end = min(len(control_seq), cut_position + 50)
+    
+    # Calculate average peak heights in upstream and downstream regions
+    trace_factor = 12  # Approximate trace to sequence position factor
+    
+    def calculate_peak_quality(traces, start_pos, end_pos):
+        """Calculate average peak height and signal quality in a region."""
+        start_trace = start_pos * trace_factor
+        end_trace = end_pos * trace_factor
+        
+        total_signal = 0
+        peak_count = 0
+        
+        for base in ['A', 'C', 'G', 'T']:
+            if end_trace <= len(traces[base]):
+                trace_segment = traces[base][start_trace:end_trace]
+                if len(trace_segment) > 0:
+                    # Find peaks (local maxima)
+                    peaks = []
+                    for i in range(1, len(trace_segment)-1):
+                        if trace_segment[i] > trace_segment[i-1] and trace_segment[i] > trace_segment[i+1]:
+                            peaks.append(trace_segment[i])
+                    
+                    if peaks:
+                        total_signal += sum(peaks)
+                        peak_count += len(peaks)
+        
+        return total_signal / peak_count if peak_count > 0 else 0
+    
+    # Calculate quality for control sample
+    control_upstream_quality = calculate_peak_quality(control_traces, upstream_start, upstream_end)
+    control_downstream_quality = calculate_peak_quality(control_traces, downstream_start, downstream_end)
+    
+    # Calculate quality for edited sample
+    edited_upstream_quality = calculate_peak_quality(edited_traces, upstream_start, upstream_end)
+    edited_downstream_quality = calculate_peak_quality(edited_traces, downstream_start, downstream_end)
+    
+    # Calculate signal decay ratio
+    control_ratio = control_downstream_quality / control_upstream_quality if control_upstream_quality > 0 else 1
+    edited_ratio = edited_downstream_quality / edited_upstream_quality if edited_upstream_quality > 0 else 0
+    
+    # Estimate editing efficiency based on signal decay
+    # The more the signal decays after the cut site in edited vs control, the higher the editing
+    signal_decay_difference = control_ratio - edited_ratio
+    
+    # Convert to percentage (normalized between 0-100%)
+    # This is a simplified estimation - real TIDE uses more sophisticated decomposition
+    editing_efficiency = min(100, max(0, signal_decay_difference * 100))
+    
+    # Calculate overall quality score (0-100)
+    quality_score = min(100, (edited_upstream_quality / control_upstream_quality * 100) if control_upstream_quality > 0 else 0)
+    
+    # Additional check: if sequences are very different after cut site, high editing
+    seq_similarity_after_cut = sum(1 for i in range(downstream_start, min(downstream_end, len(edited_seq), len(control_seq))) 
+                                  if i < len(control_seq) and i < len(edited_seq) and control_seq[i] == edited_seq[i])
+    expected_matches = downstream_end - downstream_start
+    similarity_ratio = seq_similarity_after_cut / expected_matches if expected_matches > 0 else 1
+    
+    # Adjust editing efficiency based on sequence similarity
+    if similarity_ratio < 0.7:  # Less than 70% similarity indicates significant editing
+        editing_efficiency = max(editing_efficiency, (1 - similarity_ratio) * 100)
+    
+    return {
+        'editing_efficiency': round(editing_efficiency, 1),
+        'signal_decay_ratio': round(signal_decay_difference, 3),
+        'quality_score': round(quality_score, 1),
+        'sequence_similarity': round(similarity_ratio * 100, 1)
+    }
+
 def plot_tide_analysis(control_file, edited_file, output_dir, gene_name):
     """Create a TIDE-style analysis plot comparing control and edited samples."""
     print(f"\nPerforming TIDE Analysis for {gene_name}...")
@@ -46,6 +126,16 @@ def plot_tide_analysis(control_file, edited_file, output_dir, gene_name):
     # Find where sequences diverge
     divergence_point = find_divergence_point(control_seq, edited_seq)
     print(f"  Divergence point: position {divergence_point}")
+    
+    # Calculate editing efficiency
+    efficiency_data = calculate_editing_efficiency(
+        control_seq, control_traces, 
+        edited_seq, edited_traces, 
+        divergence_point
+    )
+    
+    print(f"  Editing efficiency: {efficiency_data['editing_efficiency']}%")
+    print(f"  Quality score: {efficiency_data['quality_score']}%")
     
     # Define viewing window
     window_start = max(0, divergence_point - 50)
@@ -139,9 +229,9 @@ def plot_tide_analysis(control_file, edited_file, output_dir, gene_name):
     
     print(f"  [SUCCESS] Plot saved: {output_file}")
     
-    return divergence_point, timestamp
+    return divergence_point, timestamp, efficiency_data
 
-def analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name):
+def analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data=None):
     """Analyze gRNA positions in mRNA and recommend primers."""
     recommendations = []
     recommendations.append(f"PRIMER RECOMMENDATIONS FOR {gene_name.upper()}")
@@ -150,6 +240,25 @@ def analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name):
     recommendations.append(f"mRNA length: {len(mrna_seq)} bp")
     recommendations.append("")
     
+    # Add editing efficiency data if available
+    if efficiency_data:
+        recommendations.append("CRISPR EDITING EFFICIENCY ANALYSIS:")
+        recommendations.append("-" * 60)
+        recommendations.append(f"Editing Efficiency: {efficiency_data['editing_efficiency']}%")
+        recommendations.append(f"Signal Quality Score: {efficiency_data['quality_score']}%")
+        recommendations.append(f"Sequence Similarity After Cut: {efficiency_data['sequence_similarity']}%")
+        recommendations.append(f"Signal Decay Ratio: {efficiency_data['signal_decay_ratio']}")
+        recommendations.append("")
+        
+        # Add interpretation
+        if efficiency_data['editing_efficiency'] >= 70:
+            recommendations.append("Interpretation: HIGH editing efficiency detected")
+        elif efficiency_data['editing_efficiency'] >= 30:
+            recommendations.append("Interpretation: MODERATE editing efficiency detected")
+        else:
+            recommendations.append("Interpretation: LOW editing efficiency detected")
+        recommendations.append("")
+
     grna_positions = []
     
     # Find each gRNA in the mRNA
@@ -260,14 +369,14 @@ def process_gene_folder(gene_folder, gene_name):
     
     # Perform TIDE analysis
     try:
-        divergence_point, timestamp = plot_tide_analysis(control_file, edited_file, gene_folder, gene_name)
+        divergence_point, timestamp, efficiency_data = plot_tide_analysis(control_file, edited_file, gene_folder, gene_name)
         
         # Read mRNA sequence
         with open(mrna_file, 'r') as f:
             mrna_seq = ''.join(line.strip() for line in f).upper().replace(' ', '')
         
         # Generate recommendations
-        recommendations = analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name)
+        recommendations = analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data)
         
         # Create output directory if it doesn't exist
         output_subdir = os.path.join(gene_folder, "output")
