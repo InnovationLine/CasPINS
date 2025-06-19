@@ -25,7 +25,6 @@ desktop.ini
 
 # Project specific - Data files
 *.seq
-*.png
 *.jpg
 *.jpeg
 *.gif
