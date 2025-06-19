@@ -1,6 +1,6 @@
 PRIMER RECOMMENDATIONS FOR VMAT1
 ============================================================
-Analysis Date: 2025-06-19 10:58:32
+Analysis Date: 2025-06-19 11:19:57
 mRNA length: 1563 bp
 
 

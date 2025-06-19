@@ -1,0 +1,14 @@
+PRIMER RECOMMENDATIONS FOR VMAT2
+============================================================
+Analysis Date: 2025-06-19 11:20:00
+mRNA length: 1521 bp
+
+
+Guide RNA 1: GCCGTCCCGAGTACAGCCAGAGG
+  [NOT FOUND] in mRNA sequence!
+
+*** WARNING: No gRNAs found in the provided mRNA sequence! ***
+Please verify:
+  1. The mRNA sequence is correct
+  2. The gRNA sequences are correct
+  3. The gRNAs target this specific gene
