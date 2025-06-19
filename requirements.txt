@@ -1,0 +1,5 @@
+biopython
+numpy
+matplotlib
+requests
+beautifulsoup4 
