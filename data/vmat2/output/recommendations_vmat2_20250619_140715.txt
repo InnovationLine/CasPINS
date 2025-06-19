@@ -1,0 +1,74 @@
+PRIMER RECOMMENDATIONS FOR VMAT2
+============================================================
+Analysis Date: 2025-06-19 14:07:16
+mRNA length: 1521 bp
+
+CRISPR EDITING EFFICIENCY ANALYSIS:
+------------------------------------------------------------
+⚠️ WARNING: CUT SITE VALIDATION FAILED!
+  Expected cut site (from gRNA): position 833
+  Detected divergence point: position 0
+  Distance: 833 bp
+
+This large discrepancy suggests:
+  • The provided gRNA/mRNA sequences may be incorrect
+  • The AB1 files may be from a different target region
+  • Off-target editing may have occurred
+
+Editing Efficiency: 0%
+Signal Quality Score: 100%
+Sequence Similarity After Cut: 100%
+Analysis Confidence: LOW - Fallback method used
+
+Interpretation: LOW editing efficiency detected
+Recommendation: Consider optimizing transfection conditions or gRNA design.
+
+
+Guide RNA 1: CCGTCCCGAGTACAGCCAGA
+  [FOUND] on forward strand at position 816
+  Cut site (3bp before PAM): position 833
+
+============================================================
+RECOMMENDED SEQUENCING PRIMERS (Designed with Primer3):
+============================================================
+
+Primer3-designed primer pairs (ranked by quality):
+------------------------------------------------------------
+
+Primer Pair 1:
+  Forward: 5'-GCCATGGGAGTCTTAGTGGG-3'
+    Position: 687
+    Tm: 59.8°C, GC: 60.0%
+  Reverse: 5'-TGCCACTTTCGGGAACACAT-3'
+    Position: 988
+    Tm: 60.2°C, GC: 50.0%
+  Product size: 302 bp
+  ** RECOMMENDED - Best overall primer pair **
+
+Primer Pair 2:
+  Forward: 5'-GGCCATGGGAGTCTTAGTGG-3'
+    Position: 686
+    Tm: 59.8°C, GC: 60.0%
+  Reverse: 5'-TGCCACTTTCGGGAACACAT-3'
+    Position: 988
+    Tm: 60.2°C, GC: 50.0%
+  Product size: 303 bp
+
+Primer Pair 3:
+  Forward: 5'-GCCATGGGAGTCTTAGTGGG-3'
+    Position: 687
+    Tm: 59.8°C, GC: 60.0%
+  Reverse: 5'-GCCACTTTCGGGAACACATG-3'
+    Position: 987
+    Tm: 59.8°C, GC: 55.0%
+  Product size: 301 bp
+
+gRNA region spans: 816-839 (23 bp)
+Cut sites span: 833-833 (0 bp)
+
+----------------------------------------
+Recommended PCR conditions:
+  - Use high-fidelity polymerase (e.g., Q5, Phusion)
+  - Initial denaturation: 98°C for 30s
+  - 35 cycles: 98°C 10s, 60°C 20s, 72°C 30s
+  - Final extension: 72°C for 2 min

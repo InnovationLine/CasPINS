@@ -1,14 +1,24 @@
 PRIMER RECOMMENDATIONS FOR DDC
 ============================================================
-Analysis Date: 2025-06-19 12:45:22
+Analysis Date: 2025-06-19 14:07:18
 mRNA length: 1440 bp
 
 CRISPR EDITING EFFICIENCY ANALYSIS:
 ------------------------------------------------------------
+⚠️ WARNING: CUT SITE VALIDATION FAILED!
+  Expected cut site (from gRNA): position 94
+  Detected divergence point: position 0
+  Distance: 94 bp
+
+This large discrepancy suggests:
+  • The provided gRNA/mRNA sequences may be incorrect
+  • The AB1 files may be from a different target region
+  • Off-target editing may have occurred
+
 Editing Efficiency: 50.0%
 Dominant Indel: -10 bp (50.0%)
-Signal Quality Score: -4920.9%
-Sequence Similarity After Cut: 42.9%
+Signal Quality Score: -4648.1%
+Sequence Similarity After Cut: 50.4%
 Analysis Confidence: LOW - Poor signal quality
 
 Interpretation: MODERATE editing efficiency detected
