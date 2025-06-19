@@ -1,0 +1,68 @@
+PRIMER RECOMMENDATIONS FOR DDC
+============================================================
+Analysis Date: 2025-06-19 12:45:22
+mRNA length: 1440 bp
+
+CRISPR EDITING EFFICIENCY ANALYSIS:
+------------------------------------------------------------
+Editing Efficiency: 50.0%
+Dominant Indel: -10 bp (50.0%)
+Signal Quality Score: -4920.9%
+Sequence Similarity After Cut: 42.9%
+Analysis Confidence: LOW - Poor signal quality
+
+Interpretation: MODERATE editing efficiency detected
+Recommendation: Consider enriching edited cells before clonal isolation.
+
+WARNING: Low signal quality detected!
+Recommendation: Re-sequence samples with higher quality DNA or optimize PCR conditions.
+
+
+Guide RNA 1: ACGTCCAGTGTACCCTGACGTGG
+  [FOUND] on forward strand at position 77
+  Cut site (3bp before PAM): position 94
+
+============================================================
+RECOMMENDED SEQUENCING PRIMERS (Designed with Primer3):
+============================================================
+
+Primer3-designed primer pairs (ranked by quality):
+------------------------------------------------------------
+
+Primer Pair 1:
+  Forward: 5'-TGGATTCCCGTGAATTCCGG-3'
+    Position: 1
+    Tm: 60.1°C, GC: 55.0%
+  Reverse: 5'-AGAAGCCAATGCAGCCGATA-3'
+    Position: 309
+    Tm: 59.8°C, GC: 50.0%
+  Product size: 309 bp
+  ** RECOMMENDED - Best overall primer pair **
+
+Primer Pair 2:
+  Forward: 5'-TGGATTCCCGTGAATTCCGG-3'
+    Position: 1
+    Tm: 60.1°C, GC: 55.0%
+  Reverse: 5'-GAAGCCAATGCAGCCGATAG-3'
+    Position: 308
+    Tm: 59.4°C, GC: 55.0%
+  Product size: 308 bp
+
+Primer Pair 3:
+  Forward: 5'-TCCGGAGAAGAGGGAAGGAG-3'
+    Position: 16
+    Tm: 60.0°C, GC: 60.0%
+  Reverse: 5'-CCCAGGAGAAGCCAATGCA-3'
+    Position: 315
+    Tm: 60.0°C, GC: 57.9%
+  Product size: 300 bp
+
+gRNA region spans: 77-100 (23 bp)
+Cut sites span: 94-94 (0 bp)
+
+----------------------------------------
+Recommended PCR conditions:
+  - Use high-fidelity polymerase (e.g., Q5, Phusion)
+  - Initial denaturation: 98°C for 30s
+  - 35 cycles: 98°C 10s, 60°C 20s, 72°C 30s
+  - Final extension: 72°C for 2 min
