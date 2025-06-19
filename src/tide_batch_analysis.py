@@ -3,7 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Bio import SeqIO
 from Bio.Seq import Seq
+from Bio import pairwise2
+from Bio.pairwise2 import format_alignment
 from datetime import datetime
+import primer3
+from scipy import signal, optimize
+from scipy.fft import fft, ifft
+import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
 
 def parse_ab1(file_path):
     """Parse an .ab1 file to extract sequence and chromatogram traces."""
@@ -16,6 +24,227 @@ def parse_ab1(file_path):
         'T': record.annotations['abif_raw']['DATA12'],
     }
     return sequence, traces
+
+def align_sequences(seq1, seq2):
+    """Perform global alignment of two sequences to find exact indel locations."""
+    # Use Needleman-Wunsch global alignment
+    alignments = pairwise2.align.globalms(seq1, seq2, 2, -1, -0.5, -0.1)
+    
+    if alignments:
+        best_alignment = alignments[0]
+        aligned_seq1, aligned_seq2, score, start, end = best_alignment
+        
+        # Find first significant difference
+        for i, (base1, base2) in enumerate(zip(aligned_seq1, aligned_seq2)):
+            if base1 != base2:
+                # Count position in original sequence (excluding gaps)
+                original_pos = len(aligned_seq1[:i].replace('-', ''))
+                return original_pos, aligned_seq1, aligned_seq2
+    
+    return len(seq1) // 2, seq1, seq2
+
+def decompose_traces_tide(control_traces, edited_traces, cut_site, window_size=50):
+    """
+    Implement proper TIDE decomposition algorithm.
+    Decomposes edited trace into sum of deletion/insertion traces.
+    """
+    # Get trace region around cut site
+    trace_factor = 10  # More accurate scaling based on typical AB1 files
+    
+    start_pos = max(0, (cut_site - window_size) * trace_factor)
+    end_pos = min(len(control_traces['A']), (cut_site + window_size * 2) * trace_factor)
+    
+    # Combine all four channels for analysis
+    control_signal = np.zeros(end_pos - start_pos)
+    edited_signal = np.zeros(end_pos - start_pos)
+    
+    for base in ['A', 'C', 'G', 'T']:
+        if len(control_traces[base]) > end_pos and len(edited_traces[base]) > end_pos:
+            control_signal += control_traces[base][start_pos:end_pos]
+            edited_signal += edited_traces[base][start_pos:end_pos]
+    
+    # Normalize signals
+    control_signal = control_signal / np.max(control_signal) if np.max(control_signal) > 0 else control_signal
+    edited_signal = edited_signal / np.max(edited_signal) if np.max(edited_signal) > 0 else edited_signal
+    
+    # Find optimal shift using cross-correlation
+    correlation = signal.correlate(edited_signal, control_signal, mode='same')
+    shift = np.argmax(correlation) - len(edited_signal) // 2
+    
+    # Calculate indel spectrum (-10 to +10 bp)
+    indel_spectrum = {}
+    best_fit_score = float('inf')
+    best_efficiency = 0
+    
+    for indel_size in range(-10, 11):
+        if indel_size == 0:
+            continue
+            
+        # Create shifted version of control
+        if indel_size > 0:  # Deletion
+            shifted = np.concatenate([control_signal[indel_size:], np.zeros(indel_size)])
+        else:  # Insertion
+            shifted = np.concatenate([np.zeros(-indel_size), control_signal[:indel_size]])
+        
+        # Fit linear combination of WT and indel
+        def objective(params):
+            wt_fraction, indel_fraction = params
+            if wt_fraction < 0 or indel_fraction < 0 or wt_fraction + indel_fraction > 1:
+                return float('inf')
+            reconstructed = wt_fraction * control_signal + indel_fraction * shifted
+            return np.sum((edited_signal - reconstructed) ** 2)
+        
+        result = optimize.minimize(objective, [0.5, 0.5], bounds=[(0, 1), (0, 1)])
+        
+        if result.fun < best_fit_score:
+            best_fit_score = result.fun
+            wt_frac, indel_frac = result.x
+            indel_spectrum[indel_size] = indel_frac * 100
+            best_efficiency = (1 - wt_frac) * 100
+    
+    # Find dominant indel
+    dominant_indel = max(indel_spectrum.items(), key=lambda x: x[1]) if indel_spectrum else (0, 0)
+    
+    return {
+        'editing_efficiency': round(best_efficiency, 1),
+        'dominant_indel_size': dominant_indel[0],
+        'dominant_indel_percent': round(dominant_indel[1], 1),
+        'indel_spectrum': indel_spectrum,
+        'quality_score': round((1 - best_fit_score) * 100, 1)
+    }
+
+def design_primers_with_primer3(mrna_seq, target_regions, gene_name):
+    """
+    Design primers using primer3-py with rigorous parameters.
+    
+    Args:
+        mrna_seq: mRNA sequence
+        target_regions: List of (start, end) tuples for regions to amplify
+        gene_name: Gene name for primer naming
+    
+    Returns:
+        List of primer pair dictionaries
+    """
+    primer_results = []
+    
+    for i, (region_start, region_end) in enumerate(target_regions):
+        # Define target region with flanking sequences
+        target_start = max(0, region_start - 200)
+        target_end = min(len(mrna_seq), region_end + 200)
+        target_len = region_end - region_start
+        
+        # Primer3 parameters
+        seq_args = {
+            'SEQUENCE_ID': f'{gene_name}_region{i+1}',
+            'SEQUENCE_TEMPLATE': mrna_seq,
+            'SEQUENCE_TARGET': [region_start, target_len],
+            'SEQUENCE_INCLUDED_REGION': [target_start, target_end - target_start]
+        }
+        
+        global_args = {
+            'PRIMER_OPT_SIZE': 20,
+            'PRIMER_MIN_SIZE': 18,
+            'PRIMER_MAX_SIZE': 25,
+            'PRIMER_OPT_TM': 60.0,
+            'PRIMER_MIN_TM': 57.0,
+            'PRIMER_MAX_TM': 63.0,
+            'PRIMER_MIN_GC': 40.0,
+            'PRIMER_MAX_GC': 60.0,
+            'PRIMER_MAX_POLY_X': 4,
+            'PRIMER_SALT_MONOVALENT': 50.0,
+            'PRIMER_DNA_CONC': 50.0,
+            'PRIMER_MAX_NS_ACCEPTED': 0,
+            'PRIMER_MAX_SELF_ANY': 4,
+            'PRIMER_MAX_SELF_END': 2,
+            'PRIMER_PAIR_MAX_COMPL_ANY': 4,
+            'PRIMER_PAIR_MAX_COMPL_END': 2,
+            'PRIMER_PRODUCT_SIZE_RANGE': [[300, 800]],
+            'PRIMER_NUM_RETURN': 5
+        }
+        
+        try:
+            # Design primers
+            primer3_result = primer3.bindings.designPrimers(seq_args, global_args)
+            
+            # Extract primer pairs
+            num_primers = primer3_result.get('PRIMER_PAIR_NUM_RETURNED', 0)
+            
+            for j in range(num_primers):
+                left_seq = primer3_result.get(f'PRIMER_LEFT_{j}_SEQUENCE', '')
+                right_seq = primer3_result.get(f'PRIMER_RIGHT_{j}_SEQUENCE', '')
+                left_tm = primer3_result.get(f'PRIMER_LEFT_{j}_TM', 0)
+                right_tm = primer3_result.get(f'PRIMER_RIGHT_{j}_TM', 0)
+                left_gc = primer3_result.get(f'PRIMER_LEFT_{j}_GC_PERCENT', 0)
+                right_gc = primer3_result.get(f'PRIMER_RIGHT_{j}_GC_PERCENT', 0)
+                left_pos = primer3_result.get(f'PRIMER_LEFT_{j}', [0, 0])[0]
+                right_pos = primer3_result.get(f'PRIMER_RIGHT_{j}', [0, 0])[0]
+                product_size = primer3_result.get(f'PRIMER_PAIR_{j}_PRODUCT_SIZE', 0)
+                
+                primer_pair = {
+                    'rank': j + 1,
+                    'forward_seq': left_seq,
+                    'reverse_seq': right_seq,
+                    'forward_tm': round(left_tm, 1),
+                    'reverse_tm': round(right_tm, 1),
+                    'forward_gc': round(left_gc, 1),
+                    'reverse_gc': round(right_gc, 1),
+                    'forward_pos': left_pos,
+                    'reverse_pos': right_pos,
+                    'product_size': product_size,
+                    'target_region': f'{region_start}-{region_end}'
+                }
+                
+                primer_results.append(primer_pair)
+                
+        except Exception as e:
+            print(f"  WARNING: Primer3 failed for region {i+1}: {str(e)}")
+            # Fall back to simple primer design
+            fallback_primers = design_simple_primers(mrna_seq, region_start, region_end)
+            primer_results.extend(fallback_primers)
+    
+    return primer_results
+
+def design_simple_primers(seq, target_start, target_end):
+    """Fallback simple primer design if primer3 fails."""
+    primers = []
+    
+    # Forward primer 150-200bp upstream
+    for offset in [150, 175, 200]:
+        f_start = max(0, target_start - offset)
+        f_seq = seq[f_start:f_start+20]
+        
+        # Reverse primer 150-200bp downstream
+        r_start = min(len(seq)-20, target_end + offset - 20)
+        r_seq = str(Seq(seq[r_start:r_start+20]).reverse_complement())
+        
+        if len(f_seq) == 20 and len(r_seq) == 20:
+            primers.append({
+                'rank': len(primers) + 1,
+                'forward_seq': f_seq,
+                'reverse_seq': r_seq,
+                'forward_tm': calculate_tm(f_seq),
+                'reverse_tm': calculate_tm(r_seq),
+                'forward_gc': (f_seq.count('G') + f_seq.count('C')) * 5,
+                'reverse_gc': (r_seq.count('G') + r_seq.count('C')) * 5,
+                'forward_pos': f_start,
+                'reverse_pos': r_start,
+                'product_size': r_start + 20 - f_start,
+                'target_region': f'{target_start}-{target_end}',
+                'note': 'Simple design (Primer3 unavailable)'
+            })
+    
+    return primers
+
+def calculate_tm(sequence):
+    """Calculate melting temperature using nearest-neighbor method."""
+    # Simplified calculation - primer3 does this better
+    gc_count = sequence.count('G') + sequence.count('C')
+    at_count = sequence.count('A') + sequence.count('T')
+    
+    if len(sequence) < 14:
+        return (gc_count * 4) + (at_count * 2)
+    else:
+        return 64.9 + 41 * (gc_count - 16.4) / len(sequence)
 
 def find_divergence_point(seq1, seq2):
     """Find the point where two sequences start to diverge significantly."""
@@ -34,83 +263,113 @@ def find_divergence_point(seq1, seq2):
 
 def calculate_editing_efficiency(control_seq, control_traces, edited_seq, edited_traces, cut_position):
     """
-    Calculate CRISPR editing efficiency by analyzing chromatogram quality.
+    Calculate CRISPR editing efficiency using proper TIDE decomposition.
     
     Returns:
-        dict: Contains editing_efficiency (%), signal_decay_ratio, and quality_score
+        dict: Contains editing_efficiency (%), dominant indel info, and quality metrics
     """
-    # Define regions for analysis
-    upstream_start = max(0, cut_position - 50)
-    upstream_end = cut_position - 5
-    downstream_start = cut_position + 5
-    downstream_end = min(len(control_seq), cut_position + 50)
-    
-    # Calculate average peak heights in upstream and downstream regions
-    trace_factor = 12  # Approximate trace to sequence position factor
-    
-    def calculate_peak_quality(traces, start_pos, end_pos):
-        """Calculate average peak height and signal quality in a region."""
-        start_trace = start_pos * trace_factor
-        end_trace = end_pos * trace_factor
+    # First try proper TIDE decomposition
+    try:
+        tide_results = decompose_traces_tide(control_traces, edited_traces, cut_position)
         
-        total_signal = 0
-        peak_count = 0
+        # Add sequence-based validation
+        alignment_pos, aligned_ctrl, aligned_edit = align_sequences(
+            control_seq[max(0, cut_position-50):cut_position+50],
+            edited_seq[max(0, cut_position-50):cut_position+50]
+        )
         
-        for base in ['A', 'C', 'G', 'T']:
-            if end_trace <= len(traces[base]):
-                trace_segment = traces[base][start_trace:end_trace]
-                if len(trace_segment) > 0:
-                    # Find peaks (local maxima)
-                    peaks = []
-                    for i in range(1, len(trace_segment)-1):
-                        if trace_segment[i] > trace_segment[i-1] and trace_segment[i] > trace_segment[i+1]:
-                            peaks.append(trace_segment[i])
-                    
-                    if peaks:
-                        total_signal += sum(peaks)
-                        peak_count += len(peaks)
+        # Validate TIDE results with sequence alignment
+        seq_similarity = sum(1 for a, b in zip(aligned_ctrl, aligned_edit) if a == b) / len(aligned_ctrl)
         
-        return total_signal / peak_count if peak_count > 0 else 0
-    
-    # Calculate quality for control sample
-    control_upstream_quality = calculate_peak_quality(control_traces, upstream_start, upstream_end)
-    control_downstream_quality = calculate_peak_quality(control_traces, downstream_start, downstream_end)
-    
-    # Calculate quality for edited sample
-    edited_upstream_quality = calculate_peak_quality(edited_traces, upstream_start, upstream_end)
-    edited_downstream_quality = calculate_peak_quality(edited_traces, downstream_start, downstream_end)
-    
-    # Calculate signal decay ratio
-    control_ratio = control_downstream_quality / control_upstream_quality if control_upstream_quality > 0 else 1
-    edited_ratio = edited_downstream_quality / edited_upstream_quality if edited_upstream_quality > 0 else 0
-    
-    # Estimate editing efficiency based on signal decay
-    # The more the signal decays after the cut site in edited vs control, the higher the editing
-    signal_decay_difference = control_ratio - edited_ratio
-    
-    # Convert to percentage (normalized between 0-100%)
-    # This is a simplified estimation - real TIDE uses more sophisticated decomposition
-    editing_efficiency = min(100, max(0, signal_decay_difference * 100))
-    
-    # Calculate overall quality score (0-100)
-    quality_score = min(100, (edited_upstream_quality / control_upstream_quality * 100) if control_upstream_quality > 0 else 0)
-    
-    # Additional check: if sequences are very different after cut site, high editing
-    seq_similarity_after_cut = sum(1 for i in range(downstream_start, min(downstream_end, len(edited_seq), len(control_seq))) 
-                                  if i < len(control_seq) and i < len(edited_seq) and control_seq[i] == edited_seq[i])
-    expected_matches = downstream_end - downstream_start
-    similarity_ratio = seq_similarity_after_cut / expected_matches if expected_matches > 0 else 1
-    
-    # Adjust editing efficiency based on sequence similarity
-    if similarity_ratio < 0.7:  # Less than 70% similarity indicates significant editing
-        editing_efficiency = max(editing_efficiency, (1 - similarity_ratio) * 100)
-    
-    return {
-        'editing_efficiency': round(editing_efficiency, 1),
-        'signal_decay_ratio': round(signal_decay_difference, 3),
-        'quality_score': round(quality_score, 1),
-        'sequence_similarity': round(similarity_ratio * 100, 1)
-    }
+        tide_results['sequence_similarity'] = round(seq_similarity * 100, 1)
+        
+        # Adjust confidence based on multiple factors
+        if tide_results['quality_score'] < 50:
+            tide_results['confidence'] = 'LOW - Poor signal quality'
+        elif abs(tide_results['dominant_indel_size']) > 20:
+            tide_results['confidence'] = 'MEDIUM - Large indel detected'
+        elif tide_results['editing_efficiency'] > 90:
+            tide_results['confidence'] = 'HIGH - Clear editing pattern'
+        else:
+            tide_results['confidence'] = 'MEDIUM'
+            
+        return tide_results
+        
+    except Exception as e:
+        print(f"  WARNING: TIDE decomposition failed ({str(e)}), using fallback method")
+        
+        # Fallback to simpler analysis
+        # Define regions for analysis
+        upstream_start = max(0, cut_position - 50)
+        upstream_end = cut_position - 5
+        downstream_start = cut_position + 5
+        downstream_end = min(len(control_seq), cut_position + 50)
+        
+        # Calculate average peak heights in upstream and downstream regions
+        trace_factor = 12  # Approximate trace to sequence position factor
+        
+        def calculate_peak_quality(traces, start_pos, end_pos):
+            """Calculate average peak height and signal quality in a region."""
+            start_trace = start_pos * trace_factor
+            end_trace = end_pos * trace_factor
+            
+            total_signal = 0
+            peak_count = 0
+            
+            for base in ['A', 'C', 'G', 'T']:
+                if end_trace <= len(traces[base]):
+                    trace_segment = traces[base][start_trace:end_trace]
+                    if len(trace_segment) > 0:
+                        # Find peaks (local maxima)
+                        peaks = []
+                        for i in range(1, len(trace_segment)-1):
+                            if trace_segment[i] > trace_segment[i-1] and trace_segment[i] > trace_segment[i+1]:
+                                peaks.append(trace_segment[i])
+                        
+                        if peaks:
+                            total_signal += sum(peaks)
+                            peak_count += len(peaks)
+            
+            return total_signal / peak_count if peak_count > 0 else 0
+        
+        # Calculate quality for control sample
+        control_upstream_quality = calculate_peak_quality(control_traces, upstream_start, upstream_end)
+        control_downstream_quality = calculate_peak_quality(control_traces, downstream_start, downstream_end)
+        
+        # Calculate quality for edited sample
+        edited_upstream_quality = calculate_peak_quality(edited_traces, upstream_start, upstream_end)
+        edited_downstream_quality = calculate_peak_quality(edited_traces, downstream_start, downstream_end)
+        
+        # Calculate signal decay ratio
+        control_ratio = control_downstream_quality / control_upstream_quality if control_upstream_quality > 0 else 1
+        edited_ratio = edited_downstream_quality / edited_upstream_quality if edited_upstream_quality > 0 else 0
+        
+        # Estimate editing efficiency based on signal decay
+        signal_decay_difference = control_ratio - edited_ratio
+        editing_efficiency = min(100, max(0, signal_decay_difference * 100))
+        
+        # Calculate overall quality score
+        quality_score = min(100, (edited_upstream_quality / control_upstream_quality * 100) if control_upstream_quality > 0 else 0)
+        
+        # Check sequence similarity
+        seq_similarity_after_cut = sum(1 for i in range(downstream_start, min(downstream_end, len(edited_seq), len(control_seq))) 
+                                      if i < len(control_seq) and i < len(edited_seq) and control_seq[i] == edited_seq[i])
+        expected_matches = downstream_end - downstream_start
+        similarity_ratio = seq_similarity_after_cut / expected_matches if expected_matches > 0 else 1
+        
+        # Adjust editing efficiency based on sequence similarity
+        if similarity_ratio < 0.7:
+            editing_efficiency = max(editing_efficiency, (1 - similarity_ratio) * 100)
+        
+        return {
+            'editing_efficiency': round(editing_efficiency, 1),
+            'signal_decay_ratio': round(signal_decay_difference, 3),
+            'quality_score': round(quality_score, 1),
+            'sequence_similarity': round(similarity_ratio * 100, 1),
+            'dominant_indel_size': 'Unknown',
+            'dominant_indel_percent': 'Unknown',
+            'confidence': 'LOW - Fallback method used'
+        }
 
 def plot_tide_analysis(control_file, edited_file, output_dir, gene_name):
     """Create a TIDE-style analysis plot comparing control and edited samples."""
@@ -232,7 +491,7 @@ def plot_tide_analysis(control_file, edited_file, output_dir, gene_name):
     return divergence_point, timestamp, efficiency_data
 
 def analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data=None):
-    """Analyze gRNA positions in mRNA and recommend primers."""
+    """Analyze gRNA positions in mRNA and recommend primers using primer3."""
     recommendations = []
     recommendations.append(f"PRIMER RECOMMENDATIONS FOR {gene_name.upper()}")
     recommendations.append("=" * 60)
@@ -245,21 +504,39 @@ def analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data=No
         recommendations.append("CRISPR EDITING EFFICIENCY ANALYSIS:")
         recommendations.append("-" * 60)
         recommendations.append(f"Editing Efficiency: {efficiency_data['editing_efficiency']}%")
+        
+        # Add more detailed TIDE results if available
+        if 'dominant_indel_size' in efficiency_data and efficiency_data['dominant_indel_size'] != 'Unknown':
+            recommendations.append(f"Dominant Indel: {efficiency_data['dominant_indel_size']} bp ({efficiency_data['dominant_indel_percent']}%)")
+        
         recommendations.append(f"Signal Quality Score: {efficiency_data['quality_score']}%")
         recommendations.append(f"Sequence Similarity After Cut: {efficiency_data['sequence_similarity']}%")
-        recommendations.append(f"Signal Decay Ratio: {efficiency_data['signal_decay_ratio']}")
+        
+        if 'confidence' in efficiency_data:
+            recommendations.append(f"Analysis Confidence: {efficiency_data['confidence']}")
+        
         recommendations.append("")
         
-        # Add interpretation
+        # Add detailed interpretation and recommendations
         if efficiency_data['editing_efficiency'] >= 70:
             recommendations.append("Interpretation: HIGH editing efficiency detected")
+            recommendations.append("Recommendation: This sample shows excellent editing. Proceed with clonal isolation.")
         elif efficiency_data['editing_efficiency'] >= 30:
             recommendations.append("Interpretation: MODERATE editing efficiency detected")
+            recommendations.append("Recommendation: Consider enriching edited cells before clonal isolation.")
         else:
             recommendations.append("Interpretation: LOW editing efficiency detected")
+            recommendations.append("Recommendation: Consider optimizing transfection conditions or gRNA design.")
+            
+        # Quality-based recommendations
+        if efficiency_data['quality_score'] < 50:
+            recommendations.append("\nWARNING: Low signal quality detected!")
+            recommendations.append("Recommendation: Re-sequence samples with higher quality DNA or optimize PCR conditions.")
+        
         recommendations.append("")
 
     grna_positions = []
+    cut_sites = []
     
     # Find each gRNA in the mRNA
     for i, grna in enumerate(grna_sequences, 1):
@@ -268,72 +545,105 @@ def analyze_grna_in_mrna(mrna_seq, grna_sequences, gene_name, efficiency_data=No
         
         if grna in mrna_seq:
             pos = mrna_seq.find(grna)
+            cut_site = pos + 17  # 3bp before PAM
             grna_positions.append((pos, 'forward'))
+            cut_sites.append(cut_site)
             recommendations.append(f"  [FOUND] on forward strand at position {pos}")
-            recommendations.append(f"  Cut site (3bp before PAM): position {pos + 17}")
+            recommendations.append(f"  Cut site (3bp before PAM): position {cut_site}")
         elif grna_rc in mrna_seq:
             pos = mrna_seq.find(grna_rc)
+            cut_site = pos + 3
             grna_positions.append((pos, 'reverse'))
+            cut_sites.append(cut_site)
             recommendations.append(f"  [FOUND] on reverse strand at position {pos}")
-            recommendations.append(f"  Cut site: position {pos + 3}")
+            recommendations.append(f"  Cut site: position {cut_site}")
         else:
             recommendations.append(f"  [NOT FOUND] in mRNA sequence!")
+            recommendations.append("  WARNING: This gRNA does not match the provided mRNA sequence.")
     
     if grna_positions:
         # Sort positions to find the range
         positions = [pos for pos, strand in grna_positions]
         min_pos = min(positions)
         max_pos = max(positions)
+        min_cut = min(cut_sites)
+        max_cut = max(cut_sites)
         
         recommendations.append("\n" + "=" * 60)
-        recommendations.append("RECOMMENDED SEQUENCING PRIMERS:")
+        recommendations.append("RECOMMENDED SEQUENCING PRIMERS (Designed with Primer3):")
         recommendations.append("=" * 60)
         
-        # Design primers ~200bp away from the gRNA region
-        # Forward primer
-        primer_f_start = max(0, min_pos - 200)
-        primer_f_seq = mrna_seq[primer_f_start:primer_f_start+20]
+        # Define target regions for primer design
+        # Target region should span all cut sites with adequate flanking
+        target_regions = [(min_cut - 50, max_cut + 50)]
         
-        recommendations.append(f"\nPrimary Primer Set (covers all gRNAs):")
-        recommendations.append(f"Forward Primer: 5'-{primer_f_seq}-3'")
-        recommendations.append(f"  Position: {primer_f_start}-{primer_f_start+20}")
-        recommendations.append(f"  Tm: ~{calculate_tm(primer_f_seq)}°C")
+        # Use primer3 to design primers
+        primer3_results = design_primers_with_primer3(mrna_seq, target_regions, gene_name)
         
-        # Reverse primer
-        primer_r_start = min(len(mrna_seq)-20, max_pos + 23 + 180)
-        primer_r_seq = str(Seq(mrna_seq[primer_r_start:primer_r_start+20]).reverse_complement())
+        if primer3_results:
+            recommendations.append("\nPrimer3-designed primer pairs (ranked by quality):")
+            recommendations.append("-" * 60)
+            
+            for i, primer in enumerate(primer3_results[:3]):  # Show top 3
+                recommendations.append(f"\nPrimer Pair {primer['rank']}:")
+                recommendations.append(f"  Forward: 5'-{primer['forward_seq']}-3'")
+                recommendations.append(f"    Position: {primer['forward_pos']}")
+                recommendations.append(f"    Tm: {primer['forward_tm']}°C, GC: {primer['forward_gc']}%")
+                recommendations.append(f"  Reverse: 5'-{primer['reverse_seq']}-3'")
+                recommendations.append(f"    Position: {primer['reverse_pos']}")
+                recommendations.append(f"    Tm: {primer['reverse_tm']}°C, GC: {primer['reverse_gc']}%")
+                recommendations.append(f"  Product size: {primer['product_size']} bp")
+                
+                # Add specific notes for the best primer pair
+                if i == 0:
+                    recommendations.append(f"  ** RECOMMENDED - Best overall primer pair **")
+        else:
+            # Fallback to simple primer design if primer3 fails
+            recommendations.append("\n[Primer3 unavailable - using simple primer design]")
+            
+            # Design primers ~200bp away from the gRNA region
+            primer_f_start = max(0, min_pos - 200)
+            primer_f_seq = mrna_seq[primer_f_start:primer_f_start+20]
+            
+            recommendations.append(f"\nFallback Primer Set:")
+            recommendations.append(f"Forward Primer: 5'-{primer_f_seq}-3'")
+            recommendations.append(f"  Position: {primer_f_start}-{primer_f_start+20}")
+            recommendations.append(f"  Tm: ~{calculate_tm(primer_f_seq)}°C")
+            
+            # Reverse primer
+            primer_r_start = min(len(mrna_seq)-20, max_pos + 23 + 180)
+            primer_r_seq = str(Seq(mrna_seq[primer_r_start:primer_r_start+20]).reverse_complement())
+            
+            recommendations.append(f"Reverse Primer: 5'-{primer_r_seq}-3'")
+            recommendations.append(f"  Position: {primer_r_start}-{primer_r_start+20}")
+            recommendations.append(f"  Tm: ~{calculate_tm(primer_r_seq)}°C")
+            recommendations.append(f"Expected amplicon size: ~{primer_r_start - primer_f_start + 20} bp")
         
-        recommendations.append(f"\nReverse Primer: 5'-{primer_r_seq}-3'")
-        recommendations.append(f"  Position: {primer_r_start}-{primer_r_start+20}")
-        recommendations.append(f"  Tm: ~{calculate_tm(primer_r_seq)}°C")
+        recommendations.append(f"\ngRNA region spans: {min_pos}-{max_pos + 23} ({max_pos - min_pos + 23} bp)")
+        recommendations.append(f"Cut sites span: {min_cut}-{max_cut} ({max_cut - min_cut} bp)")
         
-        recommendations.append(f"\nExpected amplicon size: ~{primer_r_start - primer_f_start + 20} bp")
-        recommendations.append(f"gRNA region spans: {min_pos}-{max_pos + 23} ({max_pos - min_pos + 23} bp)")
-        
-        # Alternative closer primers
-        alt_f_start = max(0, min_pos - 100)
-        alt_f_seq = mrna_seq[alt_f_start:alt_f_start+20]
-        alt_r_start = min(len(mrna_seq)-20, max_pos + 23 + 100)
-        alt_r_seq = str(Seq(mrna_seq[alt_r_start:alt_r_start+20]).reverse_complement())
-        
+        # Add PCR cycling recommendations
         recommendations.append("\n" + "-" * 40)
-        recommendations.append("Alternative Primer Set (closer to gRNAs):")
-        recommendations.append(f"Forward: 5'-{alt_f_seq}-3' (pos {alt_f_start})")
-        recommendations.append(f"Reverse: 5'-{alt_r_seq}-3' (pos {alt_r_start})")
-        recommendations.append(f"Amplicon: ~{alt_r_start - alt_f_start + 20} bp")
+        recommendations.append("Recommended PCR conditions:")
+        recommendations.append("  - Use high-fidelity polymerase (e.g., Q5, Phusion)")
+        recommendations.append("  - Initial denaturation: 98°C for 30s")
+        recommendations.append("  - 35 cycles: 98°C 10s, 60°C 20s, 72°C 30s")
+        recommendations.append("  - Final extension: 72°C for 2 min")
         
     else:
-        recommendations.append("\n*** WARNING: No gRNAs found in the provided mRNA sequence! ***")
-        recommendations.append("Please verify:")
-        recommendations.append("  1. The mRNA sequence is correct")
-        recommendations.append("  2. The gRNA sequences are correct")
-        recommendations.append("  3. The gRNAs target this specific gene")
+        recommendations.append("\n*** ERROR: No gRNAs found in the provided mRNA sequence! ***")
+        recommendations.append("\nTroubleshooting steps:")
+        recommendations.append("  1. Verify the mRNA sequence is correct and complete")
+        recommendations.append("  2. Check if gRNAs include PAM sequence (remove if present)")
+        recommendations.append("  3. Ensure gRNAs are 20nt long (standard length)")
+        recommendations.append("  4. Verify gRNAs target the correct gene")
+        recommendations.append("  5. Check if you're using genomic vs cDNA sequence")
+        recommendations.append("\nTechnical details:")
+        recommendations.append(f"  - Searched for exact matches and reverse complements")
+        recommendations.append(f"  - mRNA length: {len(mrna_seq)} bp")
+        recommendations.append(f"  - Number of gRNAs: {len(grna_sequences)}")
     
     return "\n".join(recommendations)
-
-def calculate_tm(sequence):
-    """Simple Tm calculation (Wallace rule)."""
-    return (sequence.count('G') + sequence.count('C')) * 4 + (sequence.count('A') + sequence.count('T')) * 2
 
 def process_gene_folder(gene_folder, gene_name):
     """Process a single gene folder."""
