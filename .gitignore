@@ -24,7 +24,6 @@ Thumbs.db
 desktop.ini
 
 # Project specific - Data files
-*.ab1
 *.seq
 *.png
 *.jpg
@@ -33,7 +32,6 @@ desktop.ini
 *.bmp
 
 # Generated output folders
-data/*/output/
 
 # Original data folders (to be removed)
 gRNA/
