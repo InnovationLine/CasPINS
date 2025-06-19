@@ -251,15 +251,43 @@ def find_divergence_point(seq1, seq2):
     min_len = min(len(seq1), len(seq2))
     window_size = 10
     
+    # First check if sequences are identical
+    if seq1[:min_len] == seq2[:min_len]:
+        print("    Sequences are identical - no divergence found")
+        return -1  # Return -1 to indicate no divergence
+    
+    # Check overall similarity
+    total_matches = sum(1 for a, b in zip(seq1[:min_len], seq2[:min_len]) if a == b)
+    similarity = total_matches / min_len * 100
+    print(f"    Overall sequence similarity: {similarity:.1f}%")
+    
+    # If sequences are completely different, return -1
+    if similarity < 50:
+        print("    WARNING: Sequences have very low similarity - might be from different regions")
+        return -1
+    
+    # Look for divergence point
     for i in range(min_len - window_size):
         window1 = seq1[i:i+window_size]
         window2 = seq2[i:i+window_size]
         mismatches = sum(1 for a, b in zip(window1, window2) if a != b)
         
         if mismatches >= 3:
-            return i
+            # Check if this is a real divergence or just noise
+            # Look ahead to see if mismatches continue
+            if i + window_size + 10 < min_len:
+                next_window1 = seq1[i+5:i+15]
+                next_window2 = seq2[i+5:i+15]
+                next_mismatches = sum(1 for a, b in zip(next_window1, next_window2) if a != b)
+                
+                if next_mismatches >= 3:
+                    print(f"    Found divergence at position {i} ({mismatches}/10 mismatches)")
+                    return i
+            else:
+                return i
     
-    return min_len // 2
+    print("    No clear divergence point found")
+    return -1
 
 def calculate_editing_efficiency(control_seq, control_traces, edited_seq, edited_traces, cut_position):
     """
@@ -393,34 +421,48 @@ def plot_tide_analysis_with_validation(control_file, edited_file, output_dir, ge
     
     # Find where sequences diverge
     divergence_point = find_divergence_point(control_seq, edited_seq)
-    print(f"  Detected divergence point: position {divergence_point}")
     
-    # Validate against expected cut site
-    if expected_cut_site:
-        print(f"  Expected cut site from gRNA: position {expected_cut_site}")
+    # Handle cases where no divergence is found
+    if divergence_point == -1:
+        print("  No divergence detected between control and edited sequences")
+        if expected_cut_site:
+            print(f"  Using expected cut site from gRNA: position {expected_cut_site}")
+            analysis_position = expected_cut_site
+            divergence_point = expected_cut_site  # For reporting
+        else:
+            print("  ERROR: No divergence found and no expected cut site provided!")
+            # Use middle of sequence as fallback
+            analysis_position = len(control_seq) // 2
+            divergence_point = 0  # For reporting
+    else:
+        print(f"  Detected divergence point: position {divergence_point}")
         
-        # Check if divergence is near expected cut site (within 10bp)
-        distance = abs(divergence_point - expected_cut_site)
-        if distance > 10:
-            print(f"  WARNING: Divergence point is {distance}bp away from expected cut site!")
-            print(f"  This may indicate:")
-            print(f"    - The wrong gRNA sequence was provided")
-            print(f"    - The AB1 sequences don't match the mRNA reference")
-            print(f"    - Off-target editing occurred")
+        # Validate against expected cut site
+        if expected_cut_site:
+            print(f"  Expected cut site from gRNA: position {expected_cut_site}")
             
-            # Use expected cut site for analysis if divergence is too far
-            if distance > 50:
-                print(f"  Using expected cut site ({expected_cut_site}) for analysis instead of divergence point")
-                analysis_position = expected_cut_site
+            # Check if divergence is near expected cut site (within 10bp)
+            distance = abs(divergence_point - expected_cut_site)
+            if distance > 10:
+                print(f"  WARNING: Divergence point is {distance}bp away from expected cut site!")
+                print(f"  This may indicate:")
+                print(f"    - The wrong gRNA sequence was provided")
+                print(f"    - The AB1 sequences don't match the mRNA reference")
+                print(f"    - Off-target editing occurred")
+                
+                # Use expected cut site for analysis if divergence is too far
+                if distance > 50:
+                    print(f"  Using expected cut site ({expected_cut_site}) for analysis instead of divergence point")
+                    analysis_position = expected_cut_site
+                else:
+                    print(f"  Using detected divergence point for analysis")
+                    analysis_position = divergence_point
             else:
-                print(f"  Using detected divergence point for analysis")
+                print(f"  ✓ Divergence point matches expected cut site (within {distance}bp)")
                 analysis_position = divergence_point
         else:
-            print(f"  ✓ Divergence point matches expected cut site (within {distance}bp)")
+            # No expected cut site provided, use divergence point
             analysis_position = divergence_point
-    else:
-        # No expected cut site provided, use divergence point
-        analysis_position = divergence_point
     
     # Calculate editing efficiency at the validated position
     efficiency_data = calculate_editing_efficiency(
@@ -441,7 +483,13 @@ def plot_tide_analysis_with_validation(control_file, edited_file, output_dir, ge
     print(f"  Editing efficiency: {efficiency_data['editing_efficiency']}%")
     print(f"  Quality score: {efficiency_data['quality_score']}%")
     
-    # Rest of the plotting code remains the same...
+    # Check if analysis position is within sequence bounds
+    if analysis_position >= len(control_seq):
+        print(f"  ERROR: Analysis position ({analysis_position}) is beyond sequence length ({len(control_seq)})")
+        print(f"  The AB1 files may be from a different amplicon than expected")
+        # Adjust to plot the end of the sequence
+        analysis_position = len(control_seq) - 50
+        
     # Define viewing window
     window_start = max(0, analysis_position - 50)
     window_end = min(len(control_seq), analysis_position + 100)
