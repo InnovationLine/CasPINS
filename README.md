@@ -1,126 +1,145 @@
 # CRISPR TIDE Analysis Pipeline
 
-A Python-based pipeline for analyzing CRISPR editing efficiency using TIDE (Tracking of Indels by Decomposition) methodology.
+A comprehensive Python pipeline for analyzing CRISPR editing efficiency using TIDE (Tracking of Indels by Decomposition) analysis on Sanger sequencing data.
 
-## Overview
+## 🚀 Quick Start
 
-This pipeline processes Sanger sequencing chromatogram files (.ab1) to visualize and analyze CRISPR editing outcomes. It compares control and edited samples to identify divergence points and generates primer recommendations for proper TIDE analysis based on the target gene's mRNA sequence.
+```bash
+# Clone repository
+git clone <repository-url>
+cd crispr_analysis
 
-## Project Structure
+# Setup environment (Windows)
+python -m venv crispr_env
+.\crispr_env\Scripts\activate
 
-```
-crisper_analysis/
-├── src/
-│   └── tide_batch_analysis.py    # Main analysis pipeline
-├── scripts/
-│   ├── tide_analysis.py          # Individual analysis script
-│   ├── tide_analysis_demo.py     # Demo analysis script
-│   └── tide_analysis_pipeline.py # Interactive pipeline
-├── data/
-│   ├── vmat1/
-│   │   ├── control.ab1           # Control sample chromatogram
-│   │   ├── edited.ab1            # Edited sample chromatogram
-│   │   ├── grna.txt              # Guide RNA sequences
-│   │   ├── mrna.txt              # mRNA sequence (REQUIRED)
-│   │   └── output/               # All generated files go here
-│   │       ├── tide_analysis_vmat1_20250618_212231.png
-│   │       └── recommendations_vmat1_20250618_212231.txt
-│   ├── vmat2/
-│   └── ddc/
-│       └── output/                   # Created automatically when processed
-├── results/                      # Analysis outputs
-├── docs/                         # Documentation
-├── requirements.txt              # Python dependencies
-└── README.md                     # This file
+# Install dependencies
+pip install -r requirements.txt
+
+# Run analysis
+python run_analysis.py
 ```
 
-## Requirements
+## 📋 Features
+
+- **Batch Processing**: Analyze multiple CRISPR samples simultaneously
+- **TIDE Analysis**: Quantify editing efficiency with confidence scores
+- **Smart Validation**: Automatic sequence quality checks with configurable thresholds
+- **gRNA Detection**: Automated identification in mRNA sequences with mismatch tolerance
+- **Primer Design**: Professional primer recommendations using Primer3
+- **Modular Architecture**: Clean, maintainable code structure
+- **Flexible Control**: Command-line arguments for customized analysis
+- **Comprehensive Output**: Detailed reports, visualizations, and quality metrics
+- **Archive System**: Automatic organization of previous analysis runs
+
+## 📁 Project Structure
+
+```
+crispr_analysis/
+├── data/                    # Input data directory
+│   ├── vmat1/              # Gene-specific folders
+│   ├── vmat2/              
+│   └── ddc/                
+├── src/                    # Source code
+│   ├── tide_batch_analysis.py  # Main orchestrator
+│   └── utils/              # Modular components
+├── docs/                   # Documentation
+│   ├── modular_architecture.md
+│   └── project_structure.md
+├── run_analysis.py         # Entry point
+├── requirements.txt        # Dependencies
+├── USAGE.md               # Comprehensive usage guide
+└── README.md              # This file
+```
+
+## 📖 Documentation
+
+- **[USAGE.md](USAGE.md)** - Comprehensive usage guide with examples
+- **[docs/modular_architecture.md](docs/modular_architecture.md)** - Technical architecture details
+- **[docs/project_structure.md](docs/project_structure.md)** - Detailed project organization
+
+## 🔧 Requirements
 
 - Python 3.7+
-- BioPython
-- NumPy
-- Matplotlib
-- BeautifulSoup4
-- Requests
+- Windows/Linux/Mac OS
+- Dependencies listed in `requirements.txt`:
+  - biopython
+  - numpy
+  - matplotlib
+  - scipy
+  - pandas
+  - primer3-py
 
-Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+## 💡 Basic Usage
 
-## Usage
-
-### 1. Prepare Your Data
-
-For each gene you want to analyze, create a folder in `data/` with ALL required files:
-- `control.ab1` - Sanger sequencing file from wild-type sample
-- `edited.ab1` - Sanger sequencing file from CRISPR-edited sample
-- `grna.txt` - Text file with guide RNA sequences (one per line)
-- `mrna.txt` - Full mRNA sequence for primer design (REQUIRED)
-
-Example `grna.txt`:
-```
-ACGATAACACCCCCAGTAGA
-TGTCTATGCCATCGCCGATG
-```
-
-### 2. Run the Analysis
-
+### Standard Analysis
 ```bash
 python run_analysis.py
 ```
 
-The pipeline will:
-1. Process all gene folders in `data/`
-2. Create an `output/` subfolder in each gene directory
-3. Generate timestamped TIDE analysis plots in the output folder
-4. Create timestamped primer recommendations in the output folder
+### Force Plotting Despite Issues
+```bash
+python run_analysis.py --force-plot
+```
 
-### 3. Outputs
+### Custom Similarity Threshold
+```bash
+python run_analysis.py --similarity-threshold 50
+```
 
-For each gene, the pipeline generates timestamped files in `data/[gene]/output/`:
-- `tide_analysis_[gene]_[YYYYMMDD_HHMMSS].png` - Chromatogram comparison plot
-- `recommendations_[gene]_[YYYYMMDD_HHMMSS].txt` - Sequencing primer recommendations
+### Process Specific Genes
+```bash
+python run_analysis.py --genes vmat1 ddc
+```
 
-The timestamp format ensures you can run multiple analyses without overwriting previous results.
+See [USAGE.md](USAGE.md) for comprehensive examples and options.
 
-## Features
+## 📊 Input File Requirements
 
-- **Batch Processing**: Analyze multiple genes in one run
-- **Automatic gRNA Detection**: Finds guide RNA positions in mRNA sequences
-- **Primer Design**: Generates sequencing primers optimized for TIDE analysis
-- **Visual Analysis**: Three-panel plots showing control, edited, and overlay views
-- **Timestamped Outputs**: All results are timestamped to preserve analysis history
-- **Organized Outputs**: Results are saved in dedicated output folders
+Each gene folder must contain:
+- `control.ab1` - Control sample chromatogram
+- `edited.ab1` - Edited sample chromatogram
+- `grna.txt` - Guide RNA sequences (one per line)
+- `mrna.txt` - mRNA reference sequence
 
-## Adding New Genes
+## 📈 Output Files
 
-1. Create a new folder in `data/` (e.g., `data/mygene/`)
-2. Add ALL required files:
-   - `control.ab1`
-   - `edited.ab1`
-   - `grna.txt`
-   - `mrna.txt`
-3. Run `python run_analysis.py`
-4. Find results in `data/mygene/output/`
+- **ab1_analysis_gene.txt** - Detailed sequence quality analysis
+- **recommendations_gene_timestamp.txt** - TIDE results and primer recommendations
+- **tide_analysis_gene_timestamp.png** - 4-panel visualization plot
 
-## Important Notes
+## 🛠️ Command Line Options
 
-- **mrna.txt is REQUIRED**: The pipeline needs the full mRNA sequence to design proper sequencing primers
-- **Timestamped outputs**: Each run creates new files with timestamps, preserving your analysis history
-- **Output organization**: All generated files are saved in the `output/` subfolder of each gene directory
-- **File naming**: Use exactly the names specified (control.ab1, edited.ab1, grna.txt, mrna.txt)
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--force-plot` | Generate plots even with validation failures | False |
+| `--similarity-threshold` | Minimum sequence similarity (%) | 70 |
+| `--skip-validation` | Skip all validation checks | False |
+| `--interactive` | Ask before processing each gene | False |
+| `--no-archive` | Don't archive previous outputs | False |
+| `--genes` | Specific genes to analyze | all |
 
-## Troubleshooting
+## 🐛 Troubleshooting
 
-- **"Missing required files"**: Ensure ALL four files (control.ab1, edited.ab1, grna.txt, mrna.txt) are present
-- **"Could not find guide RNA in control sequence"**: Your sequencing doesn't cover the gRNA target region. Use the recommended primers to re-sequence
-- **Noisy chromatograms**: Check DNA quality and sequencing conditions. Poly-G/T regions often cause issues
+Common issues:
+1. **Low sequence similarity** - Use `--force-plot` to investigate
+2. **gRNA not found** - Check for PAM sequences or length issues
+3. **Cut site out of bounds** - Need longer sequencing reads
 
-## License
+See [USAGE.md](USAGE.md#troubleshooting) for detailed solutions.
+
+## 📝 License
 
 This project is for research use only.
 
-## Contact
+## 👥 Contributors
 
-For questions or issues, please contact the project maintainer. 
+[Add contributors here]
+
+## 📧 Contact
+
+For questions or issues, please contact the project maintainer.
+
+---
+
+For detailed usage instructions, see [USAGE.md](USAGE.md) 
