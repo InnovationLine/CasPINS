@@ -2,4 +2,7 @@ biopython
 numpy
 matplotlib
 requests
-beautifulsoup4 
+beautifulsoup4
+primer3-py>=0.6.1
+scipy>=1.7.0
+pandas>=1.3.0 

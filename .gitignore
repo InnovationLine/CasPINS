@@ -32,15 +32,6 @@ desktop.ini
 
 # Generated output folders
 
-# Original data folders (to be removed)
-gRNA/
-Results_1267065/
-2025-06-17_14C_1267196/
-
-# Results folder (except README if exists)
-results/*
-!results/.gitkeep
-!results/README.md
 
 # Sensitive data
 *.pdf
@@ -62,3 +53,7 @@ results/*
 !README.md
 !requirements.txt
 !.gitignore 
+
+# Ignore output and archive folders in gene directories
+data/*/output/
+data/*/archive/
