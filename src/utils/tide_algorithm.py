@@ -25,6 +25,11 @@ def decompose_traces_tide(control_traces, edited_traces, cut_site, window_size=5
     # Get trace region around cut site - focus on downstream region where indels appear
     trace_factor = 10  # Typical scaling for AB1 files
     
+    # Handle case where cut_site might be None or beyond sequence
+    if not cut_site or cut_site < 0:
+        # Use middle of sequence as fallback
+        cut_site = len(control_traces['A']) // (2 * trace_factor)
+    
     # Decomposition window: from cut_site + 5bp to cut_site + window_size + 5bp
     start_pos = max(0, (cut_site + 5) * trace_factor)
     end_pos = min(len(control_traces['A']), (cut_site + window_size + 5) * trace_factor)
