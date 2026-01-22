@@ -1,9 +1,9 @@
-# CITATION.cff - Citation File Format for CRISPR Analysis Suite
+# CITATION.cff - Citation File Format for CasPINS
 # This file enables proper citation of the software in academic publications
 # Required for JOSS submission
 
 cff-version: 1.2.0
-title: "CRISPR Analysis Suite"
+title: "CasPINS: Cas-Primer-Indel Suite"
 message: "If you use this software, please cite it as below."
 type: software
 authors:
@@ -16,19 +16,20 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.XXXXXXX"  # Will be assigned after publication
     description: "Zenodo archive DOI"
-repository-code: "https://github.com/yourusername/crispr-analysis-suite"
-url: "https://crispr-analysis-suite.readthedocs.io"
+repository-code: "https://github.com/raju1stnov/CasPINS"
+url: "https://caspins.readthedocs.io"
 abstract: |
-  CRISPR Analysis Suite is a comprehensive, open-source platform for 
-  CRISPR experiment design and analysis. It integrates three essential 
-  modules: (1) gRNA design with multi-species support and efficiency 
-  scoring algorithms, (2) primer design for PCR and sequencing validation, 
-  and (3) indel analysis using trace decomposition from Sanger sequencing 
-  data. The suite provides both a graphical user interface (GUI) built 
-  with Streamlit and command-line tools, making it accessible to 
+  CasPINS (Cas-Primer-Indel Suite) is a comprehensive, open-source platform 
+  for genome editing experiment design and analysis. It integrates three 
+  essential modules: (1) gRNA/TALEN design with multi-species support and 
+  efficiency scoring algorithms, (2) primer design for PCR and sequencing 
+  validation, and (3) indel analysis using trace decomposition from Sanger 
+  sequencing data. The suite provides both a graphical user interface (GUI) 
+  built with Streamlit and command-line tools, making it accessible to 
   researchers with varying computational expertise.
 keywords:
   - CRISPR
+  - TALEN
   - gRNA design
   - primer design
   - indel analysis
@@ -36,15 +37,16 @@ keywords:
   - bioinformatics
   - Sanger sequencing
   - trace decomposition
+  - CasPINS
 license: MIT
 version: "1.0.0"
-date-released: "2026-01-10"
+date-released: "2026-01-22"
 preferred-citation:
   type: article
   authors:
     - family-names: "Your Last Name"
       given-names: "Your First Name"
-  title: "CRISPR Analysis Suite: An Integrated Platform for gRNA Design, Primer Design, and Indel Analysis"
+  title: "CasPINS: An Integrated Platform for Cas-Primer-Indel Analysis in Genome Editing"
   journal: "Journal of Open Source Software"  # or BMC Bioinformatics
   year: 2026
   # doi: "10.21105/joss.XXXXX"  # Will be assigned after publication

@@ -1,8 +1,8 @@
-# CRISPR Analysis Suite - Developer Guide
+# CasPINS - Developer Guide
 
 ## Architecture Overview
 
-The suite is organized into modular components:
+CasPINS is organized into modular components:
 
 ```
 src/

@@ -1,8 +1,8 @@
-# CRISPR Analysis Suite - User Guide
+# CasPINS - User Guide
 
 ## Overview
 
-The CRISPR Analysis Suite provides a complete workflow for CRISPR experiments:
+CasPINS (Cas-Primer-Indel Suite) provides a complete workflow for genome editing experiments:
 
 1. **gRNA Design** - Find optimal guide RNAs for your target genes
 2. **Primer Design** - Generate validation primers  

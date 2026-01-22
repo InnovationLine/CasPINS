@@ -1,6 +1,6 @@
-# CRISPR Analysis Suite - Deployment Guide
+# CasPINS - Deployment Guide
 
-This guide covers all deployment options for CRISPR Analysis Suite.
+This guide covers all deployment options for CasPINS (Cas-Primer-Indel Suite).
 
 ## Quick Start Options
 
@@ -8,8 +8,8 @@ This guide covers all deployment options for CRISPR Analysis Suite.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/crispr-analysis-suite.git
-cd crispr-analysis-suite
+git clone https://github.com/raju1stnov/CasPINS.git
+cd CasPINS
 
 # Install dependencies
 pip install -r requirements.txt
@@ -28,8 +28,8 @@ docker-compose up -d
 # Access at http://localhost:8501
 
 # Or build and run manually
-docker build -t crispr-analysis-suite .
-docker run -p 8501:8501 -v $(pwd)/data:/app/data crispr-analysis-suite
+docker build -t caspins .
+docker run -p 8501:8501 -v $(pwd)/data:/app/data caspins
 ```
 
 ### Option 3: Streamlit Cloud (Zero installation - web demo)
@@ -47,15 +47,15 @@ Your app will be available at: `https://[your-app-name].streamlit.app`
 ### Option 4: PyPI Installation
 
 ```bash
-pip install crispr-analysis-suite
+pip install caspins
 
 # Run GUI
-crispr-gui
+caspins-gui
 
 # Or use CLI tools
-crispr-find-grna GENE_NAME --species human
-crispr-design-primers GENE_NAME
-crispr-analyze
+caspins-grna GENE_NAME --species human
+caspins-primers GENE_NAME
+caspins-analyze
 ```
 
 ---
@@ -146,7 +146,7 @@ streamlit run src/gui/app.py --server.port $((8500 + SLURM_ARRAY_TASK_ID))
 
 Click the Binder badge to launch without installation:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/yourusername/crispr-analysis-suite/main)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/raju1stnov/CasPINS/main)
 
 Configuration is in `.binder/`:
 - `requirements.txt` - Python dependencies
@@ -187,15 +187,15 @@ sudo certbot --nginx -d crispr.yourdomain.com
 ### Systemd Service
 
 ```ini
-# /etc/systemd/system/crispr-gui.service
+# /etc/systemd/system/caspins.service
 [Unit]
-Description=CRISPR Analysis Suite GUI
+Description=CasPINS GUI
 After=network.target
 
 [Service]
 User=www-data
-WorkingDirectory=/opt/crispr-analysis-suite
-ExecStart=/opt/crispr-analysis-suite/venv/bin/streamlit run src/gui/app.py
+WorkingDirectory=/opt/CasPINS
+ExecStart=/opt/CasPINS/venv/bin/streamlit run src/gui/app.py
 Restart=always
 
 [Install]
@@ -239,6 +239,6 @@ streamlit run src/gui/app.py --server.maxMessageSize 500
 
 ## Support
 
-- **Issues**: https://github.com/yourusername/crispr-analysis-suite/issues
-- **Documentation**: https://crispr-analysis-suite.readthedocs.io
+- **Issues**: https://github.com/raju1stnov/CasPINS/issues
+- **Documentation**: https://caspins.readthedocs.io
 - **Email**: your.email@example.com

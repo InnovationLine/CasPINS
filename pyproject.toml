@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "crispr-analysis-suite"
+name = "caspins"
 version = "1.0.0"
-description = "A comprehensive suite for CRISPR gRNA design, primer design, and indel analysis"
+description = "CasPINS: An integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
@@ -15,7 +15,7 @@ authors = [
 maintainers = [
     {name = "Your Name", email = "your.email@example.com"},
 ]
-keywords = ["crispr", "grna", "primer-design", "indel-analysis", "bioinformatics"]
+keywords = ["crispr", "talen", "grna", "primer-design", "indel-analysis", "bioinformatics", "genome-editing", "caspins"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -57,17 +57,17 @@ docs = [
 
 [project.scripts]
 # GUI entry point
-crispr-gui = "crispr_gui:cli_entry"
+caspins-gui = "caspins_gui:cli_entry"
 # CLI entry points
-crispr-find-grna = "find_grna:main"
-crispr-design-primers = "design_primers:main"
-crispr-analyze = "run_analysis:main"
+caspins-grna = "find_grna:main"
+caspins-primers = "design_primers:main"
+caspins-analyze = "run_analysis:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/crispr-analysis-suite"
-Documentation = "https://crispr-analysis-suite.readthedocs.io"
-Repository = "https://github.com/yourusername/crispr-analysis-suite"
-Issues = "https://github.com/yourusername/crispr-analysis-suite/issues"
+Homepage = "https://github.com/raju1stnov/CasPINS"
+Documentation = "https://caspins.readthedocs.io"
+Repository = "https://github.com/raju1stnov/CasPINS"
+Issues = "https://github.com/raju1stnov/CasPINS/issues"
 
 [tool.setuptools]
 packages = ["src", "src.utils", "src.grna_design", "src.grna_design.core", "src.grna_design.database", "src.grna_design.scoring"]

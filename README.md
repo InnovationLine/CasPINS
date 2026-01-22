@@ -1,13 +1,13 @@
-# CRISPR Analysis Suite
+# CasPINS - Cas-Primer-Indel Suite
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive suite for CRISPR gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
+**CasPINS** is a comprehensive, integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
 
 ## 🎯 Overview
 
-This suite provides an integrated workflow for CRISPR experiment analysis:
+CasPINS provides an integrated workflow for genome editing experiments:
 1. **gRNA Design**: Find optimal guide RNAs for your target genes
 2. **Primer Design**: Generate primers for validation experiments  
 3. **Indel Analysis**: Quantify editing efficiency from AB1 sequencing files
@@ -99,7 +99,7 @@ The graphical interface provides:
 ## 📁 Project Structure
 
 ```
-crispr_analysis/
+CasPINS/
 ├── run.py                   # Main unified entry point
 ├── setup.py                 # Package installation
 ├── requirements.txt         # Python dependencies
@@ -214,13 +214,13 @@ Our indel analysis uses **Non-Negative Least Squares (NNLS)** decomposition:
 ### Local Installation (Recommended)
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/crispr-analysis-suite.git
-cd crispr-analysis-suite
+git clone https://github.com/raju1stnov/CasPINS.git
+cd CasPINS
 
 # Create virtual environment (optional but recommended)
-python -m venv crispr_env
-source crispr_env/bin/activate  # Linux/Mac
-# or: crispr_env\Scripts\activate  # Windows
+python -m venv caspins_env
+source caspins_env/bin/activate  # Linux/Mac
+# or: caspins_env\Scripts\activate  # Windows
 
 # Install dependencies
 pip install -r requirements.txt
@@ -231,8 +231,8 @@ python run.py gui
 
 ### PyPI Installation (When Published)
 ```bash
-pip install crispr-analysis-suite
-crispr-gui
+pip install caspins
+caspins-gui
 ```
 
 ## 📚 Citation
@@ -240,12 +240,12 @@ crispr-gui
 If you use this software in your research, please cite:
 
 ```bibtex
-@software{crispr_analysis_suite,
+@software{caspins,
   author = {Your Name},
-  title = {CRISPR Analysis Suite: Integrated gRNA Design and Indel Analysis},
-  year = {2025},
+  title = {CasPINS: An Integrated Platform for Cas-Primer-Indel Analysis},
+  year = {2026},
   publisher = {GitHub},
-  url = {https://github.com/yourusername/crispr-analysis-suite}
+  url = {https://github.com/raju1stnov/CasPINS}
 }
 ```
 

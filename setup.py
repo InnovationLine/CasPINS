@@ -1,5 +1,5 @@
 """
-Setup script for CRISPR Analysis Suite
+Setup script for CasPINS (Cas-Primer-Indel Suite)
 
 This enables installation via pip and creates command-line entry points.
 """
@@ -16,14 +16,14 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
 setup(
-    name="crispr-analysis-suite",
+    name="caspins",
     version="1.0.0",
     author="Your Name",
     author_email="your.email@example.com",
-    description="A comprehensive suite for CRISPR gRNA design, primer design, and indel analysis",
+    description="CasPINS: An integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/crispr-analysis-suite",
+    url="https://github.com/raju1stnov/CasPINS",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -42,11 +42,11 @@ setup(
     entry_points={
         "console_scripts": [
             # GUI entry point
-            "crispr-gui=crispr_gui:cli_entry",
-            # CLI entry points (preserving existing functionality)
-            "crispr-find-grna=find_grna:main",
-            "crispr-design-primers=design_primers:main",
-            "crispr-analyze=run_analysis:main",
+            "caspins-gui=caspins_gui:cli_entry",
+            # CLI entry points
+            "caspins-grna=find_grna:main",
+            "caspins-primers=design_primers:main",
+            "caspins-analyze=run_analysis:main",
         ],
     },
     include_package_data=True,
