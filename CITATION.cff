@@ -1,0 +1,75 @@
+# CITATION.cff - Citation File Format for CRISPR Analysis Suite
+# This file enables proper citation of the software in academic publications
+# Required for JOSS submission
+
+cff-version: 1.2.0
+title: "CRISPR Analysis Suite"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: "Your Last Name"
+    given-names: "Your First Name"
+    email: "your.email@example.com"
+    affiliation: "Your Institution"
+    orcid: "https://orcid.org/0000-0000-0000-0000"  # Add your ORCID
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.XXXXXXX"  # Will be assigned after publication
+    description: "Zenodo archive DOI"
+repository-code: "https://github.com/yourusername/crispr-analysis-suite"
+url: "https://crispr-analysis-suite.readthedocs.io"
+abstract: |
+  CRISPR Analysis Suite is a comprehensive, open-source platform for 
+  CRISPR experiment design and analysis. It integrates three essential 
+  modules: (1) gRNA design with multi-species support and efficiency 
+  scoring algorithms, (2) primer design for PCR and sequencing validation, 
+  and (3) indel analysis using trace decomposition from Sanger sequencing 
+  data. The suite provides both a graphical user interface (GUI) built 
+  with Streamlit and command-line tools, making it accessible to 
+  researchers with varying computational expertise.
+keywords:
+  - CRISPR
+  - gRNA design
+  - primer design
+  - indel analysis
+  - gene editing
+  - bioinformatics
+  - Sanger sequencing
+  - trace decomposition
+license: MIT
+version: "1.0.0"
+date-released: "2026-01-10"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Your Last Name"
+      given-names: "Your First Name"
+  title: "CRISPR Analysis Suite: An Integrated Platform for gRNA Design, Primer Design, and Indel Analysis"
+  journal: "Journal of Open Source Software"  # or BMC Bioinformatics
+  year: 2026
+  # doi: "10.21105/joss.XXXXX"  # Will be assigned after publication
+references:
+  - type: article
+    authors:
+      - family-names: "Doench"
+        given-names: "John G."
+    title: "Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9"
+    journal: "Nature Biotechnology"
+    year: 2016
+    doi: "10.1038/nbt.3437"
+  - type: article
+    authors:
+      - family-names: "Moreno-Mateos"
+        given-names: "Miguel A."
+    title: "CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo"
+    journal: "Nature Methods"
+    year: 2015
+    doi: "10.1038/nmeth.3543"
+  - type: article
+    authors:
+      - family-names: "Brinkman"
+        given-names: "Eva K."
+    title: "Easy quantitative assessment of genome editing by sequence trace decomposition"
+    journal: "Nucleic Acids Research"
+    year: 2014
+    doi: "10.1093/nar/gku936"

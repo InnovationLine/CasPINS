@@ -1,0 +1,38 @@
+{
+    "title": "CRISPR Analysis Suite: Integrated gRNA Design and Indel Analysis",
+    "description": "A comprehensive suite for CRISPR gRNA design, primer design, and indel analysis. Features both graphical and command-line interfaces for analyzing CRISPR editing outcomes from Sanger sequencing data.",
+    "creators": [
+        {
+            "name": "Your Last Name, Your First Name",
+            "affiliation": "Your Institution",
+            "orcid": "0000-0000-0000-0000"
+        }
+    ],
+    "keywords": [
+        "CRISPR",
+        "gRNA design",
+        "primer design",
+        "indel analysis",
+        "Sanger sequencing",
+        "gene editing",
+        "bioinformatics",
+        "trace decomposition"
+    ],
+    "license": "MIT",
+    "upload_type": "software",
+    "access_right": "open",
+    "related_identifiers": [
+        {
+            "identifier": "https://github.com/yourusername/crispr-analysis-suite",
+            "relation": "isSupplementTo",
+            "scheme": "url"
+        }
+    ],
+    "version": "1.0.0",
+    "language": "eng",
+    "notes": "This software was developed for analyzing CRISPR editing outcomes in clonal cell lines using Sanger sequencing data.",
+    "references": [
+        "Doench et al. (2016) Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology",
+        "Moreno-Mateos et al. (2015) CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nature Methods"
+    ]
+} 

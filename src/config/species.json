@@ -1,0 +1,678 @@
+{
+  "version": "1.0.0",
+  "description": "Comprehensive species configuration for CRISPR Analysis Suite",
+  "last_updated": "2026-01-10",
+  "species": {
+    "mammals": [
+      {
+        "common_name": "Human",
+        "scientific_name": "Homo sapiens",
+        "ensembl_name": "homo_sapiens",
+        "assemblies": [
+          {"name": "GRCh38", "alias": "hg38", "default": true, "ensembl_version": "110"},
+          {"name": "GRCh37", "alias": "hg19", "default": false, "ensembl_version": "75"}
+        ],
+        "ncbi_taxonomy_id": 9606,
+        "refseq_assembly": "GCF_000001405.40"
+      },
+      {
+        "common_name": "Mouse",
+        "scientific_name": "Mus musculus",
+        "ensembl_name": "mus_musculus",
+        "assemblies": [
+          {"name": "GRCm39", "alias": "mm39", "default": true, "ensembl_version": "110"},
+          {"name": "GRCm38", "alias": "mm10", "default": false, "ensembl_version": "102"}
+        ],
+        "ncbi_taxonomy_id": 10090,
+        "refseq_assembly": "GCF_000001635.27"
+      },
+      {
+        "common_name": "Rat",
+        "scientific_name": "Rattus norvegicus",
+        "ensembl_name": "rattus_norvegicus",
+        "assemblies": [
+          {"name": "mRatBN7.2", "alias": "rn7", "default": true, "ensembl_version": "110"},
+          {"name": "Rnor_6.0", "alias": "rn6", "default": false, "ensembl_version": "104"}
+        ],
+        "ncbi_taxonomy_id": 10116,
+        "refseq_assembly": "GCF_015227675.2"
+      },
+      {
+        "common_name": "Dog",
+        "scientific_name": "Canis lupus familiaris",
+        "ensembl_name": "canis_lupus_familiaris",
+        "assemblies": [
+          {"name": "ROS_Cfam_1.0", "alias": "canFam4", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9615,
+        "refseq_assembly": "GCF_014441545.1"
+      },
+      {
+        "common_name": "Cat",
+        "scientific_name": "Felis catus",
+        "ensembl_name": "felis_catus",
+        "assemblies": [
+          {"name": "Felis_catus_9.0", "alias": "felCat9", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9685,
+        "refseq_assembly": "GCF_000181335.3"
+      },
+      {
+        "common_name": "Pig",
+        "scientific_name": "Sus scrofa",
+        "ensembl_name": "sus_scrofa",
+        "assemblies": [
+          {"name": "Sscrofa11.1", "alias": "susScr11", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9823,
+        "refseq_assembly": "GCF_000003025.6"
+      },
+      {
+        "common_name": "Cow",
+        "scientific_name": "Bos taurus",
+        "ensembl_name": "bos_taurus",
+        "assemblies": [
+          {"name": "ARS-UCD1.2", "alias": "bosTau9", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9913,
+        "refseq_assembly": "GCF_002263795.1"
+      },
+      {
+        "common_name": "Sheep",
+        "scientific_name": "Ovis aries",
+        "ensembl_name": "ovis_aries",
+        "assemblies": [
+          {"name": "Oar_v3.1", "alias": "oviAri3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9940,
+        "refseq_assembly": "GCF_000298735.2"
+      },
+      {
+        "common_name": "Horse",
+        "scientific_name": "Equus caballus",
+        "ensembl_name": "equus_caballus",
+        "assemblies": [
+          {"name": "EquCab3.0", "alias": "equCab3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9796,
+        "refseq_assembly": "GCF_002863925.1"
+      },
+      {
+        "common_name": "Rabbit",
+        "scientific_name": "Oryctolagus cuniculus",
+        "ensembl_name": "oryctolagus_cuniculus",
+        "assemblies": [
+          {"name": "OryCun2.0", "alias": "oryCun2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9986,
+        "refseq_assembly": "GCF_000003625.3"
+      },
+      {
+        "common_name": "Rhesus macaque",
+        "scientific_name": "Macaca mulatta",
+        "ensembl_name": "macaca_mulatta",
+        "assemblies": [
+          {"name": "Mmul_10", "alias": "rheMac10", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9544,
+        "refseq_assembly": "GCF_003339765.1"
+      },
+      {
+        "common_name": "Cynomolgus macaque",
+        "scientific_name": "Macaca fascicularis",
+        "ensembl_name": "macaca_fascicularis",
+        "assemblies": [
+          {"name": "Macaca_fascicularis_6.0", "alias": "macFas6", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9541,
+        "refseq_assembly": "GCF_012559485.2"
+      },
+      {
+        "common_name": "Chimpanzee",
+        "scientific_name": "Pan troglodytes",
+        "ensembl_name": "pan_troglodytes",
+        "assemblies": [
+          {"name": "Pan_tro_3.0", "alias": "panTro6", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9598,
+        "refseq_assembly": "GCF_002880755.1"
+      },
+      {
+        "common_name": "Gorilla",
+        "scientific_name": "Gorilla gorilla",
+        "ensembl_name": "gorilla_gorilla",
+        "assemblies": [
+          {"name": "gorGor4", "alias": "gorGor4", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9593,
+        "refseq_assembly": "GCF_000151905.2"
+      },
+      {
+        "common_name": "Ferret",
+        "scientific_name": "Mustela putorius furo",
+        "ensembl_name": "mustela_putorius_furo",
+        "assemblies": [
+          {"name": "MusPutFur1.0", "alias": "musFur1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9669,
+        "refseq_assembly": "GCF_000215625.1"
+      },
+      {
+        "common_name": "Guinea pig",
+        "scientific_name": "Cavia porcellus",
+        "ensembl_name": "cavia_porcellus",
+        "assemblies": [
+          {"name": "Cavpor3.0", "alias": "cavPor3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 10141,
+        "refseq_assembly": "GCF_000151735.1"
+      },
+      {
+        "common_name": "Golden hamster",
+        "scientific_name": "Mesocricetus auratus",
+        "ensembl_name": "mesocricetus_auratus",
+        "assemblies": [
+          {"name": "MesAur1.0", "alias": "mesAur1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 10036,
+        "refseq_assembly": "GCF_017639785.1"
+      }
+    ],
+    "birds": [
+      {
+        "common_name": "Chicken",
+        "scientific_name": "Gallus gallus",
+        "ensembl_name": "gallus_gallus",
+        "assemblies": [
+          {"name": "GRCg6a", "alias": "galGal6", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9031,
+        "refseq_assembly": "GCF_000002315.6"
+      },
+      {
+        "common_name": "Zebra finch",
+        "scientific_name": "Taeniopygia guttata",
+        "ensembl_name": "taeniopygia_guttata",
+        "assemblies": [
+          {"name": "bTaeGut1.4.pri", "alias": "taeGut2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 59729,
+        "refseq_assembly": "GCF_003957565.2"
+      },
+      {
+        "common_name": "Turkey",
+        "scientific_name": "Meleagris gallopavo",
+        "ensembl_name": "meleagris_gallopavo",
+        "assemblies": [
+          {"name": "Turkey_5.1", "alias": "melGal5", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 9103,
+        "refseq_assembly": "GCF_000146605.3"
+      },
+      {
+        "common_name": "Duck",
+        "scientific_name": "Anas platyrhynchos",
+        "ensembl_name": "anas_platyrhynchos",
+        "assemblies": [
+          {"name": "CAU_duck1.0", "alias": "anaPla1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8839,
+        "refseq_assembly": "GCF_015476345.1"
+      }
+    ],
+    "fish": [
+      {
+        "common_name": "Zebrafish",
+        "scientific_name": "Danio rerio",
+        "ensembl_name": "danio_rerio",
+        "assemblies": [
+          {"name": "GRCz11", "alias": "danRer11", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 7955,
+        "refseq_assembly": "GCF_000002035.6"
+      },
+      {
+        "common_name": "Medaka",
+        "scientific_name": "Oryzias latipes",
+        "ensembl_name": "oryzias_latipes",
+        "assemblies": [
+          {"name": "ASM223467v1", "alias": "oryLat2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8090,
+        "refseq_assembly": "GCF_002234675.1"
+      },
+      {
+        "common_name": "Fugu",
+        "scientific_name": "Takifugu rubripes",
+        "ensembl_name": "takifugu_rubripes",
+        "assemblies": [
+          {"name": "fTakRub1.2", "alias": "fr3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 31033,
+        "refseq_assembly": "GCF_901000725.2"
+      },
+      {
+        "common_name": "Tilapia",
+        "scientific_name": "Oreochromis niloticus",
+        "ensembl_name": "oreochromis_niloticus",
+        "assemblies": [
+          {"name": "O_niloticus_UMD_NMBU", "alias": "oreNil3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8128,
+        "refseq_assembly": "GCF_001858045.2"
+      },
+      {
+        "common_name": "Atlantic salmon",
+        "scientific_name": "Salmo salar",
+        "ensembl_name": "salmo_salar",
+        "assemblies": [
+          {"name": "Ssal_v3.1", "alias": "salSal1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8030,
+        "refseq_assembly": "GCF_905237065.1"
+      },
+      {
+        "common_name": "Rainbow trout",
+        "scientific_name": "Oncorhynchus mykiss",
+        "ensembl_name": "oncorhynchus_mykiss",
+        "assemblies": [
+          {"name": "USDA_OmsyChr_1.0", "alias": "omyk1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8022,
+        "refseq_assembly": "GCF_013265735.2"
+      },
+      {
+        "common_name": "Stickleback",
+        "scientific_name": "Gasterosteus aculeatus",
+        "ensembl_name": "gasterosteus_aculeatus",
+        "assemblies": [
+          {"name": "BROAD S1", "alias": "gasAcu1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 69293,
+        "refseq_assembly": "GCF_016920845.1"
+      }
+    ],
+    "amphibians": [
+      {
+        "common_name": "Western clawed frog",
+        "scientific_name": "Xenopus tropicalis",
+        "ensembl_name": "xenopus_tropicalis",
+        "assemblies": [
+          {"name": "UCB_Xtro_10.0", "alias": "xenTro10", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8364,
+        "refseq_assembly": "GCF_000004195.4"
+      },
+      {
+        "common_name": "African clawed frog",
+        "scientific_name": "Xenopus laevis",
+        "ensembl_name": "xenopus_laevis",
+        "assemblies": [
+          {"name": "Xenopus_laevis_v2", "alias": "xenLae2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8355,
+        "refseq_assembly": "GCF_001663975.1"
+      },
+      {
+        "common_name": "Axolotl",
+        "scientific_name": "Ambystoma mexicanum",
+        "ensembl_name": "ambystoma_mexicanum",
+        "assemblies": [
+          {"name": "AmexG_v6.0-DD", "alias": "ambMex6", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8296,
+        "refseq_assembly": "GCF_020917715.1"
+      }
+    ],
+    "reptiles": [
+      {
+        "common_name": "Green anole",
+        "scientific_name": "Anolis carolinensis",
+        "ensembl_name": "anolis_carolinensis",
+        "assemblies": [
+          {"name": "AnoCar2.0", "alias": "anoCar2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 28377,
+        "refseq_assembly": "GCF_000090745.1"
+      },
+      {
+        "common_name": "Painted turtle",
+        "scientific_name": "Chrysemys picta bellii",
+        "ensembl_name": "chrysemys_picta_bellii",
+        "assemblies": [
+          {"name": "Chrysemys_picta_BioNano-3.0.4", "alias": "chrPic2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 8479,
+        "refseq_assembly": "GCF_000241765.3"
+      }
+    ],
+    "invertebrates": [
+      {
+        "common_name": "Fruit fly",
+        "scientific_name": "Drosophila melanogaster",
+        "ensembl_name": "drosophila_melanogaster",
+        "assemblies": [
+          {"name": "BDGP6.32", "alias": "dm6", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 7227,
+        "refseq_assembly": "GCF_000001215.4"
+      },
+      {
+        "common_name": "Roundworm",
+        "scientific_name": "Caenorhabditis elegans",
+        "ensembl_name": "caenorhabditis_elegans",
+        "assemblies": [
+          {"name": "WBcel235", "alias": "ce11", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 6239,
+        "refseq_assembly": "GCF_000002985.6"
+      },
+      {
+        "common_name": "Yellow fever mosquito",
+        "scientific_name": "Aedes aegypti",
+        "ensembl_name": "aedes_aegypti",
+        "assemblies": [
+          {"name": "AaegL5", "alias": "aaeL5", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 7159,
+        "refseq_assembly": "GCF_002204515.2"
+      },
+      {
+        "common_name": "Malaria mosquito",
+        "scientific_name": "Anopheles gambiae",
+        "ensembl_name": "anopheles_gambiae",
+        "assemblies": [
+          {"name": "AgamP4", "alias": "agamP4", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 7165,
+        "refseq_assembly": "GCF_000005575.2"
+      },
+      {
+        "common_name": "Honeybee",
+        "scientific_name": "Apis mellifera",
+        "ensembl_name": "apis_mellifera",
+        "assemblies": [
+          {"name": "Amel_HAv3.1", "alias": "amel5", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 7460,
+        "refseq_assembly": "GCF_003254395.2"
+      },
+      {
+        "common_name": "Silkworm",
+        "scientific_name": "Bombyx mori",
+        "ensembl_name": "bombyx_mori",
+        "assemblies": [
+          {"name": "Bmori_2016v1.0", "alias": "silkDB3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 7091,
+        "refseq_assembly": "GCF_014905235.1"
+      },
+      {
+        "common_name": "Sea urchin",
+        "scientific_name": "Strongylocentrotus purpuratus",
+        "ensembl_name": "strongylocentrotus_purpuratus",
+        "assemblies": [
+          {"name": "Spur_5.0", "alias": "strPur5", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 7668,
+        "refseq_assembly": "GCF_000002235.5"
+      }
+    ],
+    "plants": [
+      {
+        "common_name": "Arabidopsis",
+        "scientific_name": "Arabidopsis thaliana",
+        "ensembl_name": "arabidopsis_thaliana",
+        "assemblies": [
+          {"name": "TAIR10", "alias": "TAIR10", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 3702,
+        "refseq_assembly": "GCF_000001735.4"
+      },
+      {
+        "common_name": "Rice",
+        "scientific_name": "Oryza sativa",
+        "ensembl_name": "oryza_sativa",
+        "assemblies": [
+          {"name": "IRGSP-1.0", "alias": "IRGSP1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 39947,
+        "refseq_assembly": "GCF_001433935.1"
+      },
+      {
+        "common_name": "Maize",
+        "scientific_name": "Zea mays",
+        "ensembl_name": "zea_mays",
+        "assemblies": [
+          {"name": "Zm-B73-REFERENCE-NAM-5.0", "alias": "B73v5", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4577,
+        "refseq_assembly": "GCF_902167145.1"
+      },
+      {
+        "common_name": "Wheat",
+        "scientific_name": "Triticum aestivum",
+        "ensembl_name": "triticum_aestivum",
+        "assemblies": [
+          {"name": "IWGSC", "alias": "IWGSC2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4565,
+        "refseq_assembly": "GCF_018294505.1"
+      },
+      {
+        "common_name": "Soybean",
+        "scientific_name": "Glycine max",
+        "ensembl_name": "glycine_max",
+        "assemblies": [
+          {"name": "Glycine_max_v2.1", "alias": "glyMa2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 3847,
+        "refseq_assembly": "GCF_000004515.6"
+      },
+      {
+        "common_name": "Tomato",
+        "scientific_name": "Solanum lycopersicum",
+        "ensembl_name": "solanum_lycopersicum",
+        "assemblies": [
+          {"name": "SL3.0", "alias": "SL3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4081,
+        "refseq_assembly": "GCF_000188115.5"
+      },
+      {
+        "common_name": "Potato",
+        "scientific_name": "Solanum tuberosum",
+        "ensembl_name": "solanum_tuberosum",
+        "assemblies": [
+          {"name": "SolTub_3.0", "alias": "solTub3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4113,
+        "refseq_assembly": "GCF_000226075.1"
+      },
+      {
+        "common_name": "Tobacco",
+        "scientific_name": "Nicotiana tabacum",
+        "ensembl_name": "nicotiana_tabacum",
+        "assemblies": [
+          {"name": "Ntab-TN90", "alias": "ntab", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4097,
+        "refseq_assembly": "GCF_000715135.1"
+      },
+      {
+        "common_name": "Cotton",
+        "scientific_name": "Gossypium hirsutum",
+        "ensembl_name": "gossypium_hirsutum",
+        "assemblies": [
+          {"name": "TM-1", "alias": "gossHir1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 3635,
+        "refseq_assembly": "GCF_007990345.1"
+      },
+      {
+        "common_name": "Barley",
+        "scientific_name": "Hordeum vulgare",
+        "ensembl_name": "hordeum_vulgare",
+        "assemblies": [
+          {"name": "MorexV3", "alias": "hvul3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4513,
+        "refseq_assembly": "GCF_904849725.1"
+      },
+      {
+        "common_name": "Grape",
+        "scientific_name": "Vitis vinifera",
+        "ensembl_name": "vitis_vinifera",
+        "assemblies": [
+          {"name": "12X", "alias": "vitVin2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 29760,
+        "refseq_assembly": "GCF_000003745.3"
+      }
+    ],
+    "fungi": [
+      {
+        "common_name": "Baker's yeast",
+        "scientific_name": "Saccharomyces cerevisiae",
+        "ensembl_name": "saccharomyces_cerevisiae",
+        "assemblies": [
+          {"name": "R64-1-1", "alias": "sacCer3", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4932,
+        "refseq_assembly": "GCF_000146045.2"
+      },
+      {
+        "common_name": "Fission yeast",
+        "scientific_name": "Schizosaccharomyces pombe",
+        "ensembl_name": "schizosaccharomyces_pombe",
+        "assemblies": [
+          {"name": "ASM294v2", "alias": "schiPom2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 4896,
+        "refseq_assembly": "GCF_000002945.1"
+      },
+      {
+        "common_name": "Aspergillus niger",
+        "scientific_name": "Aspergillus niger",
+        "ensembl_name": "aspergillus_niger",
+        "assemblies": [
+          {"name": "ASM285v2", "alias": "aspNig1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 5061,
+        "refseq_assembly": "GCF_000002855.4"
+      },
+      {
+        "common_name": "Candida albicans",
+        "scientific_name": "Candida albicans",
+        "ensembl_name": "candida_albicans",
+        "assemblies": [
+          {"name": "ASM18296v3", "alias": "candAlb1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 5476,
+        "refseq_assembly": "GCF_000182965.3"
+      },
+      {
+        "common_name": "Neurospora crassa",
+        "scientific_name": "Neurospora crassa",
+        "ensembl_name": "neurospora_crassa",
+        "assemblies": [
+          {"name": "NC12", "alias": "neuCra2", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 5141,
+        "refseq_assembly": "GCF_000182925.2"
+      }
+    ],
+    "bacteria": [
+      {
+        "common_name": "E. coli K-12",
+        "scientific_name": "Escherichia coli K-12 MG1655",
+        "ensembl_name": "escherichia_coli_k12",
+        "assemblies": [
+          {"name": "ASM584v2", "alias": "ecoli", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 511145,
+        "refseq_assembly": "GCF_000005845.2"
+      },
+      {
+        "common_name": "Bacillus subtilis",
+        "scientific_name": "Bacillus subtilis subsp. subtilis str. 168",
+        "ensembl_name": "bacillus_subtilis",
+        "assemblies": [
+          {"name": "ASM904v1", "alias": "bsub", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 224308,
+        "refseq_assembly": "GCF_000009045.1"
+      },
+      {
+        "common_name": "Pseudomonas aeruginosa",
+        "scientific_name": "Pseudomonas aeruginosa PAO1",
+        "ensembl_name": "pseudomonas_aeruginosa",
+        "assemblies": [
+          {"name": "ASM676v1", "alias": "pao1", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 208964,
+        "refseq_assembly": "GCF_000006765.1"
+      },
+      {
+        "common_name": "Staphylococcus aureus",
+        "scientific_name": "Staphylococcus aureus subsp. aureus NCTC 8325",
+        "ensembl_name": "staphylococcus_aureus",
+        "assemblies": [
+          {"name": "ASM1342v1", "alias": "saur", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 93061,
+        "refseq_assembly": "GCF_000013425.1"
+      },
+      {
+        "common_name": "Mycobacterium tuberculosis",
+        "scientific_name": "Mycobacterium tuberculosis H37Rv",
+        "ensembl_name": "mycobacterium_tuberculosis",
+        "assemblies": [
+          {"name": "ASM19595v2", "alias": "mtub", "default": true, "ensembl_version": "110"}
+        ],
+        "ncbi_taxonomy_id": 83332,
+        "refseq_assembly": "GCF_000195955.2"
+      }
+    ]
+  },
+  "crispr_systems": {
+    "cas9_variants": [
+      {"name": "SpCas9", "pam": "NGG", "default": true, "species": "Streptococcus pyogenes"},
+      {"name": "SpCas9-NG", "pam": "NG", "default": false, "species": "Engineered SpCas9"},
+      {"name": "SpCas9-VQR", "pam": "NGAN", "default": false, "species": "Engineered SpCas9"},
+      {"name": "SpCas9-EQR", "pam": "NGAG", "default": false, "species": "Engineered SpCas9"},
+      {"name": "SpCas9-VRER", "pam": "NGCG", "default": false, "species": "Engineered SpCas9"},
+      {"name": "xCas9", "pam": "NG, GAA, GAT", "default": false, "species": "Engineered SpCas9"},
+      {"name": "SaCas9", "pam": "NNGRRT", "default": false, "species": "Staphylococcus aureus"},
+      {"name": "SaCas9-KKH", "pam": "NNNRRT", "default": false, "species": "Engineered SaCas9"},
+      {"name": "NmeCas9", "pam": "NNNNGATT", "default": false, "species": "Neisseria meningitidis"},
+      {"name": "CjCas9", "pam": "NNNNRYAC", "default": false, "species": "Campylobacter jejuni"},
+      {"name": "FnCas9", "pam": "NGG", "default": false, "species": "Francisella novicida"},
+      {"name": "eSpCas9", "pam": "NGG", "default": false, "species": "Enhanced SpCas9"},
+      {"name": "SpCas9-HF1", "pam": "NGG", "default": false, "species": "High-fidelity SpCas9"},
+      {"name": "HypaCas9", "pam": "NGG", "default": false, "species": "Hyper-accurate SpCas9"}
+    ],
+    "cas12_variants": [
+      {"name": "Cas12a (Cpf1)", "pam": "TTTV", "default": false, "species": "Various"},
+      {"name": "AsCas12a", "pam": "TTTV", "default": false, "species": "Acidaminococcus sp."},
+      {"name": "LbCas12a", "pam": "TTTV", "default": false, "species": "Lachnospiraceae bacterium"},
+      {"name": "FnCas12a", "pam": "TTTV", "default": false, "species": "Francisella novicida"},
+      {"name": "enAsCas12a", "pam": "TTYN, VTTV", "default": false, "species": "Engineered AsCas12a"}
+    ],
+    "other_systems": [
+      {"name": "Cas13a", "pam": "None (RNA target)", "default": false, "species": "Various"},
+      {"name": "CasX", "pam": "TTCN", "default": false, "species": "Deltaproteobacteria"},
+      {"name": "CasY", "pam": "TA", "default": false, "species": "Uncultured bacteria"}
+    ]
+  },
+  "editing_modes": [
+    {"name": "knockout", "description": "Gene disruption via NHEJ", "default": true},
+    {"name": "knockin_hdr", "description": "Precise insertion via HDR", "default": false},
+    {"name": "activation", "description": "CRISPRa - Gene upregulation", "default": false},
+    {"name": "repression", "description": "CRISPRi - Gene silencing", "default": false},
+    {"name": "base_editing_cbe", "description": "C>T conversion (CBE)", "default": false},
+    {"name": "base_editing_abe", "description": "A>G conversion (ABE)", "default": false},
+    {"name": "prime_editing", "description": "Precise edits with pegRNA", "default": false},
+    {"name": "nanopore_enrichment", "description": "Targeted sequencing enrichment", "default": false}
+  ]
+}

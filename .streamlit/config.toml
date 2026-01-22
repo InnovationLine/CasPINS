@@ -1,0 +1,35 @@
+# Streamlit Configuration for CRISPR Analysis Suite
+# Used for both local and Streamlit Cloud deployment
+
+[global]
+developmentMode = false
+
+[server]
+headless = true
+port = 8501
+# Both options must be consistent - enable both for security
+enableCORS = true
+enableXsrfProtection = true
+maxUploadSize = 200  # MB - for AB1 files
+
+[browser]
+gatherUsageStats = false
+serverAddress = "localhost"
+
+[theme]
+primaryColor = "#1E88E5"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F5F5"
+textColor = "#212121"
+font = "sans serif"
+
+[runner]
+fastReruns = true
+
+[client]
+showErrorDetails = true
+toolbarMode = "minimal"
+
+[logger]
+level = "info"
+messageFormat = "%(asctime)s %(levelname)s %(message)s"

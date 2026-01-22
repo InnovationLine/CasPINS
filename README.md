@@ -1,145 +1,270 @@
-# CRISPR TIDE Analysis Pipeline
+# CRISPR Analysis Suite
 
-A comprehensive Python pipeline for analyzing CRISPR editing efficiency using TIDE (Tracking of Indels by Decomposition) analysis on Sanger sequencing data.
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A comprehensive suite for CRISPR gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
+
+## 🎯 Overview
+
+This suite provides an integrated workflow for CRISPR experiment analysis:
+1. **gRNA Design**: Find optimal guide RNAs for your target genes
+2. **Primer Design**: Generate primers for validation experiments  
+3. **Indel Analysis**: Quantify editing efficiency from AB1 sequencing files
+
+The tool is **completely generic** - it works with any gene from any species. Simply provide your data in the correct folder structure and the tool will process it automatically.
 
 ## 🚀 Quick Start
 
+### Option 1: Graphical User Interface (GUI) - Recommended
+
 ```bash
-# Clone repository
-git clone <repository-url>
-cd crispr_analysis
-
-# Setup environment (Windows)
-python -m venv crispr_env
-.\crispr_env\Scripts\activate
-
 # Install dependencies
 pip install -r requirements.txt
 
-# Run analysis
-python run_analysis.py
+# Launch the GUI
+python run.py gui
+
+# Or on Windows: double-click run_gui.bat
 ```
+
+The GUI opens in your web browser and provides an intuitive interface for all features.
+
+### Option 2: Command Line Interface (CLI)
+
+```bash
+# Setup
+pip install -r requirements.txt
+
+# View all available commands
+python run.py --help
+
+# Find gRNAs for your gene
+python run.py grna TP53 --species human --top 10
+
+# Design validation primers
+python run.py primers TP53
+
+# Run indel analysis
+python run.py analysis --data-dir ./data
+```
+
+## 🖥️ GUI Features
+
+The graphical interface provides:
+
+- **🔍 gRNA Design Tab**
+  - Search for optimal guide RNAs
+  - Support for 90+ species and multiple Cas types
+  - Interactive results table with filtering
+  - One-click export to gene folders
+
+- **🧪 Primer Design Tab**
+  - Automatic primer generation for validation
+  - PCR I and PCR II primer sets
+  - Database integration (NCBI, Ensembl)
+  - Direct export functionality
+
+- **📊 Indel Analysis Tab**
+  - Single sample or batch analysis modes
+  - Drag-and-drop AB1 file upload
+  - TIDE-style visualization
+  - Real-time progress tracking
+
+- **📚 Documentation Tab**
+  - Built-in help and tutorials
+  - Quick reference guides
+  - Troubleshooting tips
 
 ## 📋 Features
 
-- **Batch Processing**: Analyze multiple CRISPR samples simultaneously
-- **TIDE Analysis**: Quantify editing efficiency with confidence scores
-- **Smart Validation**: Automatic sequence quality checks with configurable thresholds
-- **gRNA Detection**: Automated identification in mRNA sequences with mismatch tolerance
-- **Primer Design**: Professional primer recommendations using Primer3
-- **Modular Architecture**: Clean, maintainable code structure
-- **Flexible Control**: Command-line arguments for customized analysis
-- **Comprehensive Output**: Detailed reports, visualizations, and quality metrics
-- **Archive System**: Automatic organization of previous analysis runs
+### Module 1: gRNA Design
+- **Multi-species support**: 90+ species including human, mouse, rat, zebrafish
+- **Multiple Cas variants**: SpCas9, SaCas9, Cas12a, SpCas9-NG, and more
+- **Advanced scoring**: Doench 2016, Moreno-Mateos, and Xu algorithms
+- **Comprehensive filtering**: GC content, homopolymers, off-targets
+
+### Module 2: Primer Design
+- **Dual primer sets**: PCR I for genomic DNA, PCR II for sequencing
+- **Automated design**: Using Primer3 with optimized parameters
+- **CRISPR-aware**: Primers flank cut sites appropriately
+- **Database integration**: NCBI, Ensembl sequence validation
+
+### Module 3: Indel Analysis
+- **Trace Decomposition**: Quantify editing efficiency with NNLS algorithm
+- **Multi-sample support**: Analyze multiple clones simultaneously
+- **Visual reports**: Publication-ready plots and summaries
+- **Quality metrics**: Signal quality and confidence scoring
 
 ## 📁 Project Structure
 
 ```
 crispr_analysis/
-├── data/                    # Input data directory
-│   ├── vmat1/              # Gene-specific folders
-│   ├── vmat2/              
-│   └── ddc/                
-├── src/                    # Source code
-│   ├── tide_batch_analysis.py  # Main orchestrator
-│   └── utils/              # Modular components
-├── docs/                   # Documentation
-│   ├── modular_architecture.md
-│   └── project_structure.md
-├── run_analysis.py         # Entry point
-├── requirements.txt        # Dependencies
-├── USAGE.md               # Comprehensive usage guide
-└── README.md              # This file
+├── run.py                   # Main unified entry point
+├── setup.py                 # Package installation
+├── requirements.txt         # Python dependencies
+├── README.md
+├── LICENSE
+├── docs/                    # Documentation
+│   ├── workflow_guide.md
+│   ├── grna_finding_guide.md
+│   └── ...
+├── tests/                   # Test suite
+└── src/                     # Source code
+    ├── cli/                 # Command-line tools
+    │   ├── find_grna.py
+    │   ├── design_primers.py
+    │   └── run_analysis.py
+    ├── gui/                 # GUI application
+    │   ├── app.py
+    │   └── streamlit_entry.py
+    ├── grna_design/         # gRNA design system
+    ├── utils/               # Analysis utilities
+    └── config/              # Configuration
+```
+
+## 📂 Data Directory Structure
+
+The tool works with **any gene** - just organize your data like this:
+
+```
+your_data_directory/         # Set via GUI Settings or CRISPR_DATA_DIR env var
+├── gene_name/               # Any gene (e.g., tp53, brca1, myod1)
+│   ├── grna.txt             # gRNA sequences (one per line)
+│   ├── mrna.txt             # mRNA reference sequence
+│   └── input/               # AB1 sequencing files
+│       ├── control.ab1      # Control/wild-type sample
+│       └── edited*.ab1      # Edited samples (any number)
+└── another_gene/
+    └── ...
+```
+
+## 🔧 Usage Examples
+
+### Find gRNAs
+```bash
+# Find gRNAs for human TP53
+python run.py grna TP53 --species human --top 10
+
+# Save directly to data folder
+python run.py grna TP53 --save-to data/tp53/grna.txt
+```
+
+### Design Primers
+```bash
+# Design primers for TP53
+python run.py primers TP53 --data-dir ./data
+```
+
+### Run Indel Analysis
+```bash
+# Analyze all genes with input data
+python run.py analysis --data-dir ./data
+
+# The pipeline automatically:
+# 1. Finds all gene folders with control.ab1 and edited*.ab1 files
+# 2. Runs trace decomposition analysis
+# 3. Generates plots and JSON results
+```
+
+## 📊 Output Files
+
+Each analysis generates:
+- `indel_analysis_gene_sample_timestamp.png` - Individual sample analysis plot
+- `indel_analysis_summary_gene_timestamp.png` - Summary of all samples
+- `indel_analysis_gene_timestamp.json` - Detailed results data
+- `primer_recommendations.txt` - PCR and sequencing primers
+
+## 🧬 Adding New Genes
+
+```bash
+# 1. Create gene folder in your data directory
+mkdir data/your_gene
+
+# 2. Add gRNA sequence
+echo "ACGTACGTACGTACGTACGT" > data/your_gene/grna.txt
+
+# 3. Add mRNA sequence (from NCBI/Ensembl)
+# Save to: data/your_gene/mrna.txt
+
+# 4. Add your AB1 sequencing files
+# data/your_gene/input/control.ab1
+# data/your_gene/input/edited*.ab1
+
+# 5. Run analysis
+python run.py analysis --data-dir ./data
 ```
 
 ## 📖 Documentation
 
-- **[USAGE.md](USAGE.md)** - Comprehensive usage guide with examples
-- **[docs/modular_architecture.md](docs/modular_architecture.md)** - Technical architecture details
-- **[docs/project_structure.md](docs/project_structure.md)** - Detailed project organization
+- [User Guide](docs/USER_GUIDE.md) - Complete usage instructions and workflows
+- [Developer Guide](docs/DEVELOPER_GUIDE.md) - Technical documentation and architecture
+- [Deployment Guide](DEPLOYMENT_GUIDE.md) - Installation and deployment options
 
-## 🔧 Requirements
+## ⚖️ Algorithm Details
 
-- Python 3.7+
-- Windows/Linux/Mac OS
-- Dependencies listed in `requirements.txt`:
-  - biopython
-  - numpy
-  - matplotlib
-  - scipy
-  - pandas
-  - primer3-py
+Our indel analysis uses **Non-Negative Least Squares (NNLS)** decomposition:
+- Open-source, public domain algorithm
+- Decomposes edited traces into shifted control traces
+- Suitable for clonal cell lines (50-100% efficiency)
+- TIDE-style visualization
 
-## 💡 Basic Usage
+## 📦 Installation Options
 
-### Standard Analysis
+### Local Installation (Recommended)
 ```bash
-python run_analysis.py
+# Clone the repository
+git clone https://github.com/yourusername/crispr-analysis-suite.git
+cd crispr-analysis-suite
+
+# Create virtual environment (optional but recommended)
+python -m venv crispr_env
+source crispr_env/bin/activate  # Linux/Mac
+# or: crispr_env\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run GUI
+python run.py gui
 ```
 
-### Force Plotting Despite Issues
+### PyPI Installation (When Published)
 ```bash
-python run_analysis.py --force-plot
+pip install crispr-analysis-suite
+crispr-gui
 ```
 
-### Custom Similarity Threshold
-```bash
-python run_analysis.py --similarity-threshold 50
+## 📚 Citation
+
+If you use this software in your research, please cite:
+
+```bibtex
+@software{crispr_analysis_suite,
+  author = {Your Name},
+  title = {CRISPR Analysis Suite: Integrated gRNA Design and Indel Analysis},
+  year = {2025},
+  publisher = {GitHub},
+  url = {https://github.com/yourusername/crispr-analysis-suite}
+}
 ```
 
-### Process Specific Genes
-```bash
-python run_analysis.py --genes vmat1 ddc
-```
+## 🤝 Contributing
 
-See [USAGE.md](USAGE.md) for comprehensive examples and options.
+Contributions are welcome! Please feel free to submit issues or pull requests.
 
-## 📊 Input File Requirements
+## 📄 License
 
-Each gene folder must contain:
-- `control.ab1` - Control sample chromatogram
-- `edited.ab1` - Edited sample chromatogram
-- `grna.txt` - Guide RNA sequences (one per line)
-- `mrna.txt` - mRNA reference sequence
+This project is licensed under the MIT License - see LICENSE file for details.
 
-## 📈 Output Files
+## 🙏 Acknowledgments
 
-- **ab1_analysis_gene.txt** - Detailed sequence quality analysis
-- **recommendations_gene_timestamp.txt** - TIDE results and primer recommendations
-- **tide_analysis_gene_timestamp.png** - 4-panel visualization plot
-
-## 🛠️ Command Line Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--force-plot` | Generate plots even with validation failures | False |
-| `--similarity-threshold` | Minimum sequence similarity (%) | 70 |
-| `--skip-validation` | Skip all validation checks | False |
-| `--interactive` | Ask before processing each gene | False |
-| `--no-archive` | Don't archive previous outputs | False |
-| `--genes` | Specific genes to analyze | all |
-
-## 🐛 Troubleshooting
-
-Common issues:
-1. **Low sequence similarity** - Use `--force-plot` to investigate
-2. **gRNA not found** - Check for PAM sequences or length issues
-3. **Cut site out of bounds** - Need longer sequencing reads
-
-See [USAGE.md](USAGE.md#troubleshooting) for detailed solutions.
-
-## 📝 License
-
-This project is for research use only.
-
-## 👥 Contributors
-
-[Add contributors here]
+- BioPython for sequence handling
+- Primer3 for primer design
+- NumPy/SciPy for signal processing
+- Streamlit for the GUI framework
+- The CRISPR community for continued innovation
 
 ## 📧 Contact
 
-For questions or issues, please contact the project maintainer.
-
----
-
-For detailed usage instructions, see [USAGE.md](USAGE.md) 
+For questions or support, please open an issue on GitHub.

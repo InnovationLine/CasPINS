@@ -1,5 +1,5 @@
 """
-TIDE Batch Analysis Pipeline for Multiple Edited Samples
+Indel Analysis Pipeline for Multiple Edited Samples
 Processes multiple edited AB1 files against a single control
 """
 
@@ -15,8 +15,8 @@ from utils.sequence_analysis import (
     calculate_similarity, find_grna_in_sequence, 
     align_sequences, find_divergence_point
 )
-from utils.tide_algorithm import (
-    decompose_traces_tide, calculate_editing_efficiency_fallback
+from utils.indel_analysis import (
+    decompose_traces_indel_analysis, calculate_editing_efficiency_fallback
 )
 from utils.file_management import (
     archive_output_files, ensure_output_dir, 
@@ -24,33 +24,40 @@ from utils.file_management import (
 )
 from utils.primer_design import generate_primer_recommendations
 from utils.visualization_multi import (
-    plot_tide_analysis_multi, create_summary_report
+    plot_indel_analysis_multi, create_summary_report
 )
 
 
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description='CRISPR TIDE Analysis Pipeline for Multiple Samples',
+        description='CRISPR Indel Analysis Pipeline for Multiple Samples',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Run with default settings
-  python tide_batch_analysis_multi.py
+  # Run with default settings (uses configured data directory)
+  python indel_analysis_multi.py
+  
+  # Specify data directory
+  python indel_analysis_multi.py --data-dir /path/to/data
   
   # Skip specific genes
-  python tide_batch_analysis_multi.py --skip-genes vmat1
+  python indel_analysis_multi.py --skip-genes gene1 gene2
   
   # Force analysis even without input folder
-  python tide_batch_analysis_multi.py --force
+  python indel_analysis_multi.py --force
         """
+    )
+    
+    parser.add_argument(
+        '--data-dir',
+        help='Path to data directory containing gene folders (overrides config)'
     )
     
     parser.add_argument(
         '--skip-genes',
         nargs='+',
-        choices=['vmat1', 'vmat2', 'ddc'],
-        help='Genes to skip during analysis'
+        help='Gene folder names to skip during analysis (e.g., gene1 gene2)'
     )
     
     parser.add_argument(
@@ -148,14 +155,14 @@ def process_single_edited_sample(control_file, edited_file, gene_name, grna_sequ
     if expected_cut_site and expected_cut_site > len(control_seq):
         print(f"      WARNING: Cut site ({expected_cut_site}) is beyond control sequence length ({len(control_seq)})")
     
-    # Perform TIDE analysis
+    # Perform indel analysis
     try:
-        efficiency_data = decompose_traces_tide(
+        efficiency_data = decompose_traces_indel_analysis(
             control_traces, edited_traces, expected_cut_site
         )
-        efficiency_data['method'] = 'TIDE'
+        efficiency_data['method'] = 'Trace Decomposition'
     except Exception as e:
-        print(f"      WARNING: TIDE decomposition failed, using fallback method")
+        print(f"      WARNING: Trace decomposition failed, using fallback method")
         efficiency_data = calculate_editing_efficiency_fallback(
             control_seq, control_traces, edited_seq, edited_traces, expected_cut_site
         )
@@ -190,35 +197,47 @@ def process_single_edited_sample(control_file, edited_file, gene_name, grna_sequ
 def process_gene_folder(gene_folder, gene_name, args):
     """
     Process a single gene folder with multiple edited samples.
-    
+
     Args:
         gene_folder: Path to gene folder
         gene_name: Gene name
         args: Command line arguments
-        
+
     Returns:
         bool: Success status
     """
-    print(f"\nProcessing {gene_name}...")
-    
+    print(f"\n{'='*60}")
+    print(f"Processing {gene_name}...")
+    print(f"  Folder: {gene_folder}")
+
     # Check for input folder
     input_exists, control_file, edited_files = check_input_folder(gene_folder)
-    
+    print(f"  Input check: exists={input_exists}, control={control_file is not None}, edited_count={len(edited_files)}")
+
     if not input_exists:
         if args.force:
             print(f"  WARNING: No input folder found for {gene_name}, skipping...")
         else:
             print(f"  INFO: No input folder found for {gene_name}, skipping...")
         return False
-    
+
     print(f"  Found {len(edited_files)} edited samples to process")
-    
+    for ef in edited_files[:5]:  # Show first 5
+        print(f"    - {os.path.basename(ef)}")
+    if len(edited_files) > 5:
+        print(f"    ... and {len(edited_files) - 5} more")
+
     # Read gRNA and mRNA sequences
     grna_file = os.path.join(gene_folder, "grna.txt")
     mrna_file = os.path.join(gene_folder, "mrna.txt")
     
+    print(f"  Checking grna.txt: {os.path.exists(grna_file)}")
+    print(f"  Checking mrna.txt: {os.path.exists(mrna_file)}")
+
     if not os.path.exists(grna_file) or not os.path.exists(mrna_file):
         print(f"  ERROR: Missing gRNA or mRNA file for {gene_name}")
+        print(f"    grna_file exists: {os.path.exists(grna_file)}")
+        print(f"    mrna_file exists: {os.path.exists(mrna_file)}")
         return False
     
     # Read sequences
@@ -249,8 +268,8 @@ def process_gene_folder(gene_folder, gene_name, args):
         
         all_results.append(results)
         
-        # Generate individual TIDE plot
-        plot_path = plot_tide_analysis_multi(
+        # Generate individual indel analysis plot
+        plot_path = plot_indel_analysis_multi(
             control_file, edited_file, output_dir, gene_name,
             sample_name, results, grna_sequences, timestamp
         )
@@ -273,7 +292,7 @@ def process_gene_folder(gene_folder, gene_name, args):
     }
     
     import json
-    results_file = os.path.join(output_dir, f"tide_results_{gene_name}_{timestamp}.json")
+    results_file = os.path.join(output_dir, f"indel_analysis_{gene_name}_{timestamp}.json")
     with open(results_file, 'w') as f:
         json.dump(detailed_results, f, indent=2)
     
@@ -282,32 +301,70 @@ def process_gene_folder(gene_folder, gene_name, args):
     return True
 
 
+def get_data_directory():
+    """Get data directory from config or environment."""
+    # Try to load from config
+    try:
+        from config.settings import get_data_directory as config_get_data_dir
+        data_dir = config_get_data_dir()
+        if data_dir:
+            return data_dir
+    except ImportError:
+        pass
+    
+    # Check environment variable
+    env_data_dir = os.environ.get('CRISPR_DATA_DIR', '')
+    if env_data_dir and os.path.isdir(env_data_dir):
+        return env_data_dir
+    
+    # Check for local data folder as fallback
+    if os.path.isdir('data'):
+        return 'data'
+    
+    return None
+
+
 def main():
     """Main function to process gene folders."""
     # Parse command line arguments
     args = parse_arguments()
     
     print("\n" + "="*60)
-    print("TIDE ANALYSIS - MULTIPLE SAMPLES PIPELINE")
+    print("INDEL ANALYSIS - MULTIPLE SAMPLES PIPELINE")
     print("="*60)
     print(f"Processing clonally expanded CRISPR edited cell lines")
     print(f"Each edited sample will be compared against control")
     
-    # Look for gene folders
-    data_dir = "data"
-    if not os.path.exists(data_dir):
-        print(f"\nERROR: {data_dir} directory not found!")
+    # Get data directory - priority: command line > config > env > local
+    data_dir = args.data_dir if hasattr(args, 'data_dir') and args.data_dir else get_data_directory()
+    
+    if not data_dir:
+        print(f"\nERROR: Data directory not configured!")
+        print("Please set data directory using one of:")
+        print("  1. GUI Settings panel")
+        print("  2. Environment variable CRISPR_DATA_DIR")
+        print("  3. Create a 'data' folder in current directory")
         return
     
-    # Determine which genes to process
-    all_genes = ['vmat1', 'vmat2', 'ddc']
-    genes_to_process = [g for g in all_genes if g not in (args.skip_genes or [])]
+    if not os.path.exists(data_dir):
+        print(f"\nERROR: Data directory '{data_dir}' not found!")
+        return
     
+    print(f"\nUsing data directory: {data_dir}")
+    
+    # Dynamically find all gene folders (not hardcoded list)
     gene_folders = []
-    for gene in genes_to_process:
-        gene_path = os.path.join(data_dir, gene)
-        if os.path.isdir(gene_path):
-            gene_folders.append((gene_path, gene))
+    skip_genes = [g.lower() for g in (args.skip_genes or [])]
+    
+    for item in os.listdir(data_dir):
+        item_path = os.path.join(data_dir, item)
+        if os.path.isdir(item_path) and not item.startswith('.'):
+            # Skip if in skip list
+            if item.lower() in skip_genes:
+                continue
+            # Check if it looks like a gene folder (has input folder)
+            if os.path.isdir(os.path.join(item_path, 'input')):
+                gene_folders.append((item_path, item))
     
     if not gene_folders:
         print(f"\nNo gene folders found to process!")

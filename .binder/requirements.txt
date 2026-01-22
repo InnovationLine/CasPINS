@@ -1,3 +1,4 @@
+# Requirements for Binder
 biopython==1.81
 numpy==1.24.3
 matplotlib==3.7.1
@@ -8,3 +9,5 @@ scipy==1.10.1
 pandas==2.0.2
 plotly==5.14.1
 streamlit>=1.28.0
+seaborn>=0.11.0
+scikit-learn>=0.24.0 

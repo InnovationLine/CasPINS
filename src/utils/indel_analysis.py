@@ -1,6 +1,6 @@
 """
-TIDE Algorithm Module
-Implements TIDE decomposition and editing efficiency calculations
+Indel Analysis Algorithm Module
+Implements trace decomposition and editing efficiency calculations
 """
 
 import numpy as np
@@ -8,10 +8,13 @@ from scipy import signal, optimize
 from scipy.optimize import nnls
 
 
-def decompose_traces_tide(control_traces, edited_traces, cut_site, window_size=50):
+def decompose_traces_indel_analysis(control_traces, edited_traces, cut_site, window_size=50):
     """
-    Implement proper TIDE decomposition algorithm.
-    Decomposes edited trace into sum of deletion/insertion traces.
+    Implement trace decomposition algorithm for indel analysis.
+    Decomposes edited trace into sum of deletion/insertion traces using NNLS.
+    
+    Note: This is our own implementation using standard signal processing
+    techniques (Non-Negative Least Squares), not the proprietary TIDE algorithm.
     
     Args:
         control_traces: Dictionary of control chromatogram traces
@@ -20,7 +23,7 @@ def decompose_traces_tide(control_traces, edited_traces, cut_site, window_size=5
         window_size: Size of window around cut site to analyze
         
     Returns:
-        dict: TIDE analysis results
+        dict: Indel analysis results
     """
     # Get trace region around cut site - focus on downstream region where indels appear
     trace_factor = 10  # Typical scaling for AB1 files
@@ -145,7 +148,7 @@ def decompose_traces_tide(control_traces, edited_traces, cut_site, window_size=5
 def calculate_editing_efficiency_fallback(control_seq, control_traces, edited_seq, edited_traces, cut_position):
     """
     Fallback method for calculating editing efficiency using signal decay.
-    Used when TIDE decomposition fails.
+    Used when trace decomposition fails.
     
     Args:
         control_seq: Control sequence

@@ -31,7 +31,18 @@ desktop.ini
 *.bmp
 
 # Generated output folders
+output/
 
+# Cache files (auto-generated)
+cache/
+*.db
+
+# AB1 trace files (binary, should not be in repo)
+*.ab1
+
+# Data directory - user-provided, not part of source code
+# Data and code are SEPARATED - data is NOT part of the repo
+data/
 
 # Sensitive data
 *.pdf
@@ -57,3 +68,10 @@ desktop.ini
 # Ignore output and archive folders in gene directories
 data/*/output/
 data/*/archive/
+
+# Config files with user-specific paths
+crispr_config.json
+.crispr_analysis/
+
+# Design history (auto-generated)
+**/design_history.json

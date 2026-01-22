@@ -1,6 +1,6 @@
 """
-Visualization Module
-Handles plotting TIDE analysis graphs with validation
+Visualization Module for Indel Analysis
+Handles plotting trace decomposition analysis graphs with validation
 """
 
 import os
@@ -55,23 +55,19 @@ def validate_for_plotting(control_seq, edited_seq, expected_cut_site, similarity
     return should_plot, validation_issues
 
 
-def plot_tide_analysis(control_file, edited_file, output_dir, gene_name, 
-                      expected_cut_site, efficiency_data, validation_issues, args):
+def plot_indel_analysis(control_file, edited_file, output_dir, gene_name,
+                       grna_info, efficiency_data, timestamp=None):
     """
-    Create TIDE analysis plot with validation warnings.
+    Create indel analysis plot with validation warnings.
     
     Args:
         control_file: Path to control AB1
         edited_file: Path to edited AB1
         output_dir: Output directory
         gene_name: Gene name
-        expected_cut_site: Expected cut site position
-        efficiency_data: TIDE analysis results
-        validation_issues: List of ValidationIssue objects
-        args: Command line arguments
-        
-    Returns:
-        str: Path to saved plot
+        grna_info: gRNA information dict
+        efficiency_data: Indel analysis results
+        timestamp: Optional timestamp
     """
     from .ab1_parser import parse_ab1
     from .sequence_analysis import find_divergence_point
@@ -87,7 +83,7 @@ def plot_tide_analysis(control_file, edited_file, output_dir, gene_name,
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
     
     # Title with warnings if present
-    title = f"TIDE Analysis - {gene_name.upper()}"
+    title = f"Indel Analysis - {gene_name.upper()}"
     if validation_issues:
         title += " [ISSUES DETECTED]"
     fig.suptitle(title, fontsize=16, fontweight='bold')
@@ -111,9 +107,9 @@ def plot_tide_analysis(control_file, edited_file, output_dir, gene_name,
     divergence_point = find_divergence_point(control_seq, edited_seq)
     plot_sequence_alignment(ax2, control_seq, edited_seq, divergence_point, expected_cut_site, "Sequence Alignment")
     
-    # Subplot 3: TIDE decomposition or signal decay
-    if efficiency_data.get('indel_spectrum'):
-        plot_indel_spectrum(ax3, efficiency_data['indel_spectrum'], "Indel Spectrum")
+    # Subplot 3: Trace decomposition or signal decay
+    if efficiency_data.get('signal_decay_ratio') is not None:
+        ax3.set_title('Signal Decay Analysis (Fallback Method)', fontsize=12)
     else:
         plot_signal_analysis(ax3, efficiency_data, "Signal Analysis")
     
@@ -124,7 +120,7 @@ def plot_tide_analysis(control_file, edited_file, output_dir, gene_name,
     plt.tight_layout()
     
     # Save plot
-    plot_filename = f"tide_analysis_{gene_name}_{timestamp}.png"
+    plot_filename = f"indel_analysis_{gene_name}_{timestamp}.png"
     if validation_issues and any(i.severity == 'error' for i in validation_issues):
         plot_filename = plot_filename.replace('.png', '_WARNING.png')
     
@@ -152,7 +148,7 @@ def plot_error_figure(output_dir, gene_name, validation_errors):
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(111)
     
-    error_text = f"TIDE Analysis Failed for {gene_name.upper()}\n\n"
+    error_text = f"Indel Analysis Failed for {gene_name.upper()}\n\n"
     error_text += "\n".join(f"• {error}" for error in validation_errors)
     error_text += "\n\nPlease ensure:\n"
     error_text += "• Sequencing covers the gRNA target region\n"
@@ -172,7 +168,7 @@ def plot_error_figure(output_dir, gene_name, validation_errors):
     ax.axis('off')
     
     # Save error plot
-    error_plot_path = os.path.join(output_dir, f"tide_analysis_{gene_name}_{timestamp}_ERROR.png")
+    error_plot_path = os.path.join(output_dir, f"indel_analysis_{gene_name}_{timestamp}_ERROR.png")
     plt.savefig(error_plot_path, dpi=300, bbox_inches='tight')
     plt.close()
     
@@ -260,16 +256,16 @@ def plot_sequence_alignment(ax, control_seq, edited_seq, divergence_point, cut_s
     ax.legend()
 
 
-def plot_indel_spectrum(ax, indel_spectrum, title):
-    """Plot indel spectrum from TIDE analysis."""
-    if indel_spectrum:
-        sizes = list(indel_spectrum.keys())
-        frequencies = list(indel_spectrum.values())
+def plot_indel_spectrum(ax, efficiency_data):
+    """Plot indel spectrum from trace decomposition analysis."""
+    if efficiency_data.get('indel_spectrum'):
+        sizes = list(efficiency_data['indel_spectrum'].keys())
+        frequencies = list(efficiency_data['indel_spectrum'].values())
         
         colors = ['red' if s < 0 else 'blue' for s in sizes]
         ax.bar(sizes, frequencies, color=colors, alpha=0.7)
         
-        ax.set_title(title)
+        ax.set_title('Indel Spectrum')
         ax.set_xlabel('Indel Size (bp)')
         ax.set_ylabel('Frequency (%)')
         ax.grid(True, alpha=0.3)
