@@ -1,11 +1,11 @@
-# CRISPR Analysis Suite - Docker Container
+# CasPINS - Cas-Primer-Indel Suite - Docker Container
 # Multi-platform support for Mac, Windows, Linux
 
 FROM python:3.10-slim
 
 # Set metadata
 LABEL maintainer="your.email@example.com"
-LABEL description="CRISPR Analysis Suite - gRNA Design, Primer Design, Indel Analysis"
+LABEL description="CasPINS - Cas-Primer-Indel Suite - gRNA Design, Primer Design, Indel Analysis"
 LABEL version="1.0.0"
 
 # Set environment variables

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-CRISPR Analysis Suite - Main Entry Point
+CasPINS - Cas-Primer-Indel Suite - Main Entry Point
 =========================================
 
 A unified command-line interface for all CRISPR analysis tools.
@@ -31,7 +31,7 @@ sys.path.insert(0, _src_dir)
 def print_help():
     """Print usage information."""
     help_text = """
-CRISPR Analysis Suite - Unified Command Interface
+CasPINS - Cas-Primer-Indel Suite - Unified Command Interface
 ==================================================
 
 Usage: python run.py <command> [arguments]
@@ -61,7 +61,7 @@ Documentation:
 
 def run_gui():
     """Launch the Streamlit GUI."""
-    print("Starting CRISPR Analysis Suite GUI...")
+    print("Starting CasPINS - Cas-Primer-Indel Suite GUI...")
     print("=" * 60)
     print("The GUI will open in your default web browser.")
     print("Press Ctrl+C to stop the server.")

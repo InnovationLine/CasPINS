@@ -1,5 +1,5 @@
 """
-Configuration module for CRISPR Analysis Suite
+Configuration module for CasPINS - Cas-Primer-Indel Suite
 
 Provides:
 - Species configuration (90+ species)

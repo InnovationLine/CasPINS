@@ -1,4 +1,4 @@
-# Streamlit Configuration for CRISPR Analysis Suite
+# Streamlit Configuration for CasPINS - Cas-Primer-Indel Suite
 # Used for both local and Streamlit Cloud deployment
 
 [global]

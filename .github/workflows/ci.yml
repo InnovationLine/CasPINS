@@ -1,4 +1,4 @@
-# GitHub Actions CI/CD Pipeline for CRISPR Analysis Suite
+# GitHub Actions CI/CD Pipeline for CasPINS - Cas-Primer-Indel Suite
 # Required for JOSS submission - tests must pass
 
 name: CI

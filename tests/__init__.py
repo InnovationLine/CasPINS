@@ -1,5 +1,5 @@
 """
-Test suite for CRISPR Analysis Suite
+Test suite for CasPINS - Cas-Primer-Indel Suite
 
 Tests are organized by module:
 - test_grna_design.py - gRNA design module tests

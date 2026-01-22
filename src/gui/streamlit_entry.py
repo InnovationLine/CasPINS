@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Streamlit Cloud Entry Point for CRISPR Analysis Suite
+Streamlit Cloud Entry Point for CasPINS - Cas-Primer-Indel Suite
 
 This file is the entry point for Streamlit Cloud deployment.
 It imports and runs the main GUI application.

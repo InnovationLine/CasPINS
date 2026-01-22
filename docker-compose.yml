@@ -1,4 +1,4 @@
-# Docker Compose for CRISPR Analysis Suite
+# Docker Compose for CasPINS - Cas-Primer-Indel Suite
 # Usage: docker-compose up -d
 
 version: '3.8'

@@ -1,5 +1,5 @@
 """
-Utils package for CRISPR Analysis Suite
+Utils package for CasPINS - Cas-Primer-Indel Suite
 
 Includes:
 - AB1 file parsing

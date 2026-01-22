@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Comprehensive species configuration for CRISPR Analysis Suite",
+  "description": "Comprehensive species configuration for CasPINS - Cas-Primer-Indel Suite",
   "last_updated": "2026-01-10",
   "species": {
     "mammals": [

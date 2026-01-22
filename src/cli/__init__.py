@@ -1,5 +1,5 @@
 """
-CRISPR Analysis Suite - Command Line Interface Tools
+CasPINS - Cas-Primer-Indel Suite - Command Line Interface Tools
 
 Available CLI tools:
 - find_grna: Find optimal gRNAs for target genes

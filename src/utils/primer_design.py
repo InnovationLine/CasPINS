@@ -561,7 +561,7 @@ def generate_enhanced_primer_report(grna_positions: List[Tuple], mrna_seq: str,
     # Header
     report.append(f"Advanced Primer Design Report for {gene_name} ({species})")
     report.append("=" * 80)
-    report.append(f"Generated using CRISPR Analysis Suite")
+    report.append(f"Generated using CasPINS - Cas-Primer-Indel Suite")
     report.append(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     report.append("")
     

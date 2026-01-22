@@ -1,5 +1,5 @@
 """
-CRISPR Analysis Suite - Graphical User Interface
+CasPINS - Cas-Primer-Indel Suite - Graphical User Interface
 
 The GUI provides a user-friendly web interface for:
 - gRNA design with multi-species support
