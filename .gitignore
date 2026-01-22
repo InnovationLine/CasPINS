@@ -23,6 +23,9 @@ build/
 Thumbs.db
 desktop.ini
 
+# Project specific - Figures folder (kept locally, not in repo)
+Figures/
+
 # Project specific - Data files
 *.seq
 *.jpg
