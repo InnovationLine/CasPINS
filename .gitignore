@@ -78,3 +78,10 @@ crispr_config.json
 
 # Design history (auto-generated)
 **/design_history.json
+
+# Art files and figure legends (not part of repo)
+Art_files/
+Figure_Legends.md
+
+# Temporary Office files
+~$*
