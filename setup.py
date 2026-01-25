@@ -18,12 +18,12 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="caspins",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Rinki Dasgupta, Kaushik Das",
+    author_email="rinkidsgpt@gmail.com",
     description="CasPINS: An integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/raju1stnov/CasPINS",
+    url="https://github.com/InnovationLine/CasPINS",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",

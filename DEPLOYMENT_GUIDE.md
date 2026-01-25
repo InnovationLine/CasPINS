@@ -8,7 +8,7 @@ This guide covers all deployment options for CasPINS (Cas-Primer-Indel Suite).
 
 ```bash
 # Clone the repository
-git clone https://github.com/raju1stnov/CasPINS.git
+git clone https://github.com/InnovationLine/CasPINS.git
 cd CasPINS
 
 # Install dependencies
@@ -146,7 +146,7 @@ streamlit run src/gui/app.py --server.port $((8500 + SLURM_ARRAY_TASK_ID))
 
 Click the Binder badge to launch without installation:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/raju1stnov/CasPINS/main)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/InnovationLine/CasPINS/main)
 
 Configuration is in `.binder/`:
 - `requirements.txt` - Python dependencies
@@ -239,6 +239,6 @@ streamlit run src/gui/app.py --server.maxMessageSize 500
 
 ## Support
 
-- **Issues**: https://github.com/raju1stnov/CasPINS/issues
+- **Issues**: https://github.com/InnovationLine/CasPINS/issues
 - **Documentation**: https://caspins.readthedocs.io
-- **Email**: your.email@example.com
+- **Email**: rinkidsgpt@gmail.com

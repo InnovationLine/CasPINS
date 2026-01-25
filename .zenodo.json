@@ -1,11 +1,16 @@
 {
-    "title": "CasPINS: An Integrated Platform for Cas-Primer-Indel Analysis in Genome Editing",
-    "description": "CasPINS (Cas-Primer-Indel Suite) is a comprehensive platform for CRISPR/TALEN gRNA design, primer design, and indel analysis. Features both graphical and command-line interfaces for analyzing genome editing outcomes from Sanger sequencing data.",
+    "title": "CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis",
+    "description": "CasPINS (Cas-Primer-Indel Suite) is a comprehensive, open-source platform for CRISPR/TALEN gRNA design, primer design, and indel analysis. Features both graphical and command-line interfaces for analyzing genome editing outcomes from Sanger sequencing data.",
     "creators": [
         {
-            "name": "Your Last Name, Your First Name",
-            "affiliation": "Your Institution",
-            "orcid": "0000-0000-0000-0000"
+            "name": "Dasgupta, Rinki",
+            "affiliation": "Department of Psychiatry and Neuroscience, Dell Medical Center at University of Texas at Austin",
+            "orcid": "0009-0008-5478-840X"
+        },
+        {
+            "name": "Das, Kaushik",
+            "affiliation": "Department of Computer Applications, National Institute of Technology Jharkhand",
+            "orcid": "0009-0009-8828-2631"
         }
     ],
     "keywords": [
@@ -25,7 +30,7 @@
     "access_right": "open",
     "related_identifiers": [
         {
-            "identifier": "https://github.com/raju1stnov/CasPINS",
+            "identifier": "https://github.com/InnovationLine/CasPINS",
             "relation": "isSupplementTo",
             "scheme": "url"
         }
@@ -35,6 +40,7 @@
     "notes": "CasPINS was developed for comprehensive genome editing experiment design and analysis, supporting both CRISPR and TALEN systems.",
     "references": [
         "Doench et al. (2016) Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology",
-        "Moreno-Mateos et al. (2015) CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nature Methods"
+        "Moreno-Mateos et al. (2015) CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nature Methods",
+        "Brinkman et al. (2014) Easy quantitative assessment of genome editing by sequence trace decomposition. Nucleic Acids Research"
     ]
 } 

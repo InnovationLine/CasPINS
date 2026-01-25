@@ -10,10 +10,12 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Your Name", email = "your.email@example.com"},
+    {name = "Rinki Dasgupta", email = "rinkidsgpt@gmail.com"},
+    {name = "Kaushik Das", email = "kaushik.k.das@gmail.com"},
 ]
 maintainers = [
-    {name = "Your Name", email = "your.email@example.com"},
+    {name = "Rinki Dasgupta", email = "rinkidsgpt@gmail.com"},
+    {name = "Kaushik Das", email = "kaushik.k.das@gmail.com"},
 ]
 keywords = ["crispr", "talen", "grna", "primer-design", "indel-analysis", "bioinformatics", "genome-editing", "caspins"]
 classifiers = [
@@ -64,10 +66,10 @@ caspins-primers = "design_primers:main"
 caspins-analyze = "run_analysis:main"
 
 [project.urls]
-Homepage = "https://github.com/raju1stnov/CasPINS"
-Documentation = "https://caspins.readthedocs.io"
-Repository = "https://github.com/raju1stnov/CasPINS"
-Issues = "https://github.com/raju1stnov/CasPINS/issues"
+Homepage = "https://github.com/InnovationLine/CasPINS"
+Documentation = "https://github.com/InnovationLine/CasPINS#readme"
+Repository = "https://github.com/InnovationLine/CasPINS"
+Issues = "https://github.com/InnovationLine/CasPINS/issues"
 
 [tool.setuptools]
 packages = ["src", "src.utils", "src.grna_design", "src.grna_design.core", "src.grna_design.database", "src.grna_design.scoring"]

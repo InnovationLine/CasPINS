@@ -214,7 +214,7 @@ Our indel analysis uses **Non-Negative Least Squares (NNLS)** decomposition:
 ### Local Installation (Recommended)
 ```bash
 # Clone the repository
-git clone https://github.com/raju1stnov/CasPINS.git
+git clone https://github.com/InnovationLine/CasPINS.git
 cd CasPINS
 
 # Create virtual environment (optional but recommended)
@@ -241,11 +241,12 @@ If you use this software in your research, please cite:
 
 ```bibtex
 @software{caspins,
-  author = {Your Name},
-  title = {CasPINS: An Integrated Platform for Cas-Primer-Indel Analysis},
+  author = {Dasgupta, Rinki and Das, Kaushik},
+  title = {CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis},
   year = {2026},
   publisher = {GitHub},
-  url = {https://github.com/raju1stnov/CasPINS}
+  url = {https://github.com/InnovationLine/CasPINS},
+  doi = {10.5281/zenodo.16789347}
 }
 ```
 

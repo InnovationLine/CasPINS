@@ -4,7 +4,7 @@
 FROM python:3.10-slim
 
 # Set metadata
-LABEL maintainer="your.email@example.com"
+LABEL maintainer="rinkidsgpt@gmail.com"
 LABEL description="CasPINS - Cas-Primer-Indel Suite - gRNA Design, Primer Design, Indel Analysis"
 LABEL version="1.0.0"
 

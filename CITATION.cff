@@ -7,17 +7,22 @@ title: "CasPINS: Cas-Primer-Indel Suite"
 message: "If you use this software, please cite it as below."
 type: software
 authors:
-  - family-names: "Your Last Name"
-    given-names: "Your First Name"
-    email: "your.email@example.com"
-    affiliation: "Your Institution"
-    orcid: "https://orcid.org/0000-0000-0000-0000"  # Add your ORCID
+  - family-names: "Dasgupta"
+    given-names: "Rinki"
+    email: "rinkidsgpt@gmail.com"
+    affiliation: "Department of Psychiatry and Neuroscience, Dell Medical Center at University of Texas at Austin"
+    orcid: "https://orcid.org/0009-0008-5478-840X"
+  - family-names: "Das"
+    given-names: "Kaushik"
+    email: "kaushik.k.das@gmail.com"
+    affiliation: "Department of Computer Applications, National Institute of Technology Jharkhand"
+    orcid: "https://orcid.org/0009-0009-8828-2631"
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.XXXXXXX"  # Will be assigned after publication
+    value: "10.5281/zenodo.16789347"
     description: "Zenodo archive DOI"
-repository-code: "https://github.com/raju1stnov/CasPINS"
-url: "https://caspins.readthedocs.io"
+repository-code: "https://github.com/InnovationLine/CasPINS"
+url: "https://github.com/InnovationLine/CasPINS"
 abstract: |
   CasPINS (Cas-Primer-Indel Suite) is a comprehensive, open-source platform 
   for genome editing experiment design and analysis. It integrates three 
@@ -44,12 +49,12 @@ date-released: "2026-01-22"
 preferred-citation:
   type: article
   authors:
-    - family-names: "Your Last Name"
-      given-names: "Your First Name"
-  title: "CasPINS: An Integrated Platform for Cas-Primer-Indel Analysis in Genome Editing"
-  journal: "Journal of Open Source Software"  # or BMC Bioinformatics
+    - family-names: "Dasgupta"
+      given-names: "Rinki"
+    - family-names: "Das"
+      given-names: "Kaushik"
+  title: "CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis"
   year: 2026
-  # doi: "10.21105/joss.XXXXX"  # Will be assigned after publication
 references:
   - type: article
     authors:
