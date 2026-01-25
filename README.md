@@ -7,11 +7,14 @@
 
 **CasPINS** is a comprehensive, integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
 
+![1769376119488](image/README/1769376119488.png)
+
 ## 🎯 Overview
 
 CasPINS provides an integrated workflow for genome editing experiments:
+
 1. **gRNA Design**: Find optimal guide RNAs for your target genes
-2. **Primer Design**: Generate primers for validation experiments  
+2. **Primer Design**: Generate primers for validation experiments
 3. **Indel Analysis**: Quantify editing efficiency from AB1 sequencing files
 
 The tool is **completely generic** - it works with any gene from any species. Simply provide your data in the correct folder structure and the tool will process it automatically.
@@ -56,24 +59,25 @@ python run.py analysis --data-dir ./data
 The graphical interface provides:
 
 - **🔍 gRNA Design Tab**
+
   - Search for optimal guide RNAs
   - Support for 90+ species and multiple Cas types
   - Interactive results table with filtering
   - One-click export to gene folders
-
 - **🧪 Primer Design Tab**
+
   - Automatic primer generation for validation
   - PCR I and PCR II primer sets
   - Database integration (NCBI, Ensembl)
   - Direct export functionality
-
 - **📊 Indel Analysis Tab**
+
   - Single sample or batch analysis modes
   - Drag-and-drop AB1 file upload
   - TIDE-style visualization
   - Real-time progress tracking
-
 - **📚 Documentation Tab**
+
   - Built-in help and tutorials
   - Quick reference guides
   - Troubleshooting tips
@@ -81,18 +85,21 @@ The graphical interface provides:
 ## 📋 Features
 
 ### Module 1: gRNA Design
+
 - **Multi-species support**: 90+ species including human, mouse, rat, zebrafish
 - **Multiple Cas variants**: SpCas9, SaCas9, Cas12a, SpCas9-NG, and more
 - **Advanced scoring**: Doench 2016, Moreno-Mateos, and Xu algorithms
 - **Comprehensive filtering**: GC content, homopolymers, off-targets
 
 ### Module 2: Primer Design
+
 - **Dual primer sets**: PCR I for genomic DNA, PCR II for sequencing
 - **Automated design**: Using Primer3 with optimized parameters
 - **CRISPR-aware**: Primers flank cut sites appropriately
 - **Database integration**: NCBI, Ensembl sequence validation
 
 ### Module 3: Indel Analysis
+
 - **Trace Decomposition**: Quantify editing efficiency with NNLS algorithm
 - **Multi-sample support**: Analyze multiple clones simultaneously
 - **Visual reports**: Publication-ready plots and summaries
@@ -144,6 +151,7 @@ your_data_directory/         # Set via GUI Settings or CRISPR_DATA_DIR env var
 ## 🔧 Usage Examples
 
 ### Find gRNAs
+
 ```bash
 # Find gRNAs for human TP53
 python run.py grna TP53 --species human --top 10
@@ -153,12 +161,14 @@ python run.py grna TP53 --save-to data/tp53/grna.txt
 ```
 
 ### Design Primers
+
 ```bash
 # Design primers for TP53
 python run.py primers TP53 --data-dir ./data
 ```
 
 ### Run Indel Analysis
+
 ```bash
 # Analyze all genes with input data
 python run.py analysis --data-dir ./data
@@ -172,6 +182,7 @@ python run.py analysis --data-dir ./data
 ## 📊 Output Files
 
 Each analysis generates:
+
 - `indel_analysis_gene_sample_timestamp.png` - Individual sample analysis plot
 - `indel_analysis_summary_gene_timestamp.png` - Summary of all samples
 - `indel_analysis_gene_timestamp.json` - Detailed results data
@@ -206,6 +217,7 @@ python run.py analysis --data-dir ./data
 ## ⚖️ Algorithm Details
 
 Our indel analysis uses **Non-Negative Least Squares (NNLS)** decomposition:
+
 - Open-source, public domain algorithm
 - Decomposes edited traces into shifted control traces
 - Suitable for clonal cell lines (50-100% efficiency)
@@ -214,6 +226,7 @@ Our indel analysis uses **Non-Negative Least Squares (NNLS)** decomposition:
 ## 📦 Installation Options
 
 ### Local Installation (Recommended)
+
 ```bash
 # Clone the repository
 git clone https://github.com/InnovationLine/CasPINS.git
