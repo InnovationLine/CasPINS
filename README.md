@@ -3,6 +3,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18370068.svg)](https://doi.org/10.5281/zenodo.18370068)
+[![CI](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml/badge.svg)](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml)
 
 **CasPINS** is a comprehensive, integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
 
@@ -230,8 +231,12 @@ pip install -r requirements.txt
 python run.py gui
 ```
 
-### PyPI Installation (When Published)
+### PyPI Installation (Planned)
+
+> **Note:** PyPI package publication is planned for a future release.
+
 ```bash
+# Coming soon:
 pip install caspins
 caspins-gui
 ```
@@ -253,7 +258,7 @@ If you use this software in your research, please cite:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues or pull requests.
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting issues or pull requests.
 
 ## 📄 License
 

@@ -33,6 +33,7 @@ abstract: |
   built with Streamlit and command-line tools, making it accessible to 
   researchers with varying computational expertise.
 keywords:
+  - Python
   - CRISPR
   - TALEN
   - gRNA design
@@ -47,14 +48,18 @@ license: MIT
 version: "1.0.0"
 date-released: "2026-01-22"
 preferred-citation:
-  type: article
+  type: software
   authors:
     - family-names: "Dasgupta"
       given-names: "Rinki"
+      orcid: "https://orcid.org/0009-0008-5478-840X"
     - family-names: "Das"
       given-names: "Kaushik"
+      orcid: "https://orcid.org/0009-0009-8828-2631"
   title: "CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis"
   year: 2026
+  doi: "10.5281/zenodo.18370068"
+  url: "https://github.com/InnovationLine/CasPINS"
 references:
   - type: article
     authors:
