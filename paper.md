@@ -28,7 +28,7 @@ bibliography: paper.bib
 ---
 # Summary
 
-![1769377192491](image/paper/1769377192491.png)
+![CasPINS GUI Interface showing the integrated workflow for gRNA design, primer generation, and indel analysis. The platform provides an intuitive web-based interface accessible to researchers without programming expertise.](image/paper/1769377192491.png)
 
 CasPINS (Cas-Primer-Indel Suite) is an open-source Python platform that integrates the complete genome editing workflow—gRNA/TALEN design, primer generation, and indel analysis—into a single interactive web application. The platform supports 90+ species, 14 CRISPR-Cas variants, and provides both graphical and command-line interfaces, enabling researchers without programming expertise to efficiently design and validate genome editing experiments.
 
