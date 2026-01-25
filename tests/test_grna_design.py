@@ -92,8 +92,8 @@ class TestGRNAGenerator:
     
     def test_find_pam_sites_ngg(self):
         """Test finding NGG PAM sites."""
-        # Sequence with known NGG sites
-        sequence = "ACGTACGTACGTACGTACGTNGGACGTACGTACGTACGTACGT"
+        # Sequence with known NGG sites (AGG is a valid NGG PAM)
+        sequence = "ACGTACGTACGTACGTACGTAGGACGTACGTACGTACGTACGT"
         pam_sites = self.generator.find_pam_sites(sequence)
         assert len(pam_sites) > 0
     

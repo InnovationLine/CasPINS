@@ -25,6 +25,17 @@ def decompose_traces_indel_analysis(control_traces, edited_traces, cut_site, win
     Returns:
         dict: Indel analysis results
     """
+    # Handle empty traces
+    if not control_traces or len(control_traces.get('A', [])) == 0:
+        return {
+            'editing_efficiency': 0.0,
+            'dominant_indel_size': 0,
+            'dominant_indel_percent': 0.0,
+            'indel_spectrum': {},
+            'quality_score': 0.0,
+            'confidence': 'ERROR - Empty traces provided'
+        }
+    
     # Get trace region around cut site - focus on downstream region where indels appear
     trace_factor = 10  # Typical scaling for AB1 files
     

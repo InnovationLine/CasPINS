@@ -35,6 +35,20 @@ class GRNAGenerator:
         self.cas_type = cas_type
         self.grna_length = grna_length
         self.pam_sequences = self.PAM_SEQUENCES.get(cas_type, ['NGG'])
+        # Primary PAM sequence (first in list)
+        self.pam = self.pam_sequences[0] if self.pam_sequences else 'NGG'
+    
+    def find_pam_sites(self, sequence: str) -> List[Dict]:
+        """
+        Find all PAM sites in a sequence.
+        
+        Args:
+            sequence: DNA sequence to search
+            
+        Returns:
+            List of PAM site dictionaries
+        """
+        return self.find_all_grnas(sequence, strand='both')
         
     def find_all_grnas(self, sequence: str, strand: str = 'both') -> List[Dict]:
         """
@@ -166,10 +180,10 @@ class GRNAGenerator:
             max_length: Maximum allowed homopolymer length
             
         Returns:
-            True if homopolymer exceeds max_length
+            True if homopolymer meets or exceeds max_length
         """
         for base in 'ATCG':
-            if base * (max_length + 1) in grna:
+            if base * max_length in grna:
                 return True
         return False
     
