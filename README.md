@@ -2,6 +2,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18370068.svg)](https://doi.org/10.5281/zenodo.18370068)
 
 **CasPINS** is a comprehensive, integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
 
@@ -244,9 +245,9 @@ If you use this software in your research, please cite:
   author = {Dasgupta, Rinki and Das, Kaushik},
   title = {CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis},
   year = {2026},
-  publisher = {GitHub},
+  publisher = {Zenodo},
   url = {https://github.com/InnovationLine/CasPINS},
-  doi = {10.5281/zenodo.16789347}
+  doi = {10.5281/zenodo.18370068}
 }
 ```
 

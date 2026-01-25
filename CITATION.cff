@@ -19,8 +19,8 @@ authors:
     orcid: "https://orcid.org/0009-0009-8828-2631"
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.16789347"
-    description: "Zenodo archive DOI"
+    value: "10.5281/zenodo.18370068"
+    description: "Zenodo archive DOI (concept DOI for all versions)"
 repository-code: "https://github.com/InnovationLine/CasPINS"
 url: "https://github.com/InnovationLine/CasPINS"
 abstract: |
