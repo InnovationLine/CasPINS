@@ -84,10 +84,10 @@ Art_files/
 Figure_Legends.md
 
 # Manuscript and submission files (kept locally, not in repo)
-paper.md
+# paper.md  # Commented out - needed for collaboration
 CoverLetter_NAR.md
 GraphicalAbstract.md
-paper.bib
+# paper.bib  # Commented out - needed for collaboration
 
 # Temporary Office files
 ~$*
