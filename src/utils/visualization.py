@@ -56,7 +56,8 @@ def validate_for_plotting(control_seq, edited_seq, expected_cut_site, similarity
 
 
 def plot_indel_analysis(control_file, edited_file, output_dir, gene_name,
-                       grna_info, efficiency_data, timestamp=None):
+                       grna_info, efficiency_data, timestamp=None,
+                       validation_issues=None, expected_cut_site=None):
     """
     Create indel analysis plot with validation warnings.
     
@@ -68,9 +69,21 @@ def plot_indel_analysis(control_file, edited_file, output_dir, gene_name,
         grna_info: gRNA information dict
         efficiency_data: Indel analysis results
         timestamp: Optional timestamp
+        validation_issues: Optional list of ValidationIssue objects
+        expected_cut_site: Optional expected cut site position
     """
     from .ab1_parser import parse_ab1
     from .sequence_analysis import find_divergence_point
+    
+    # Initialize validation_issues if not provided
+    if validation_issues is None:
+        validation_issues = []
+    
+    # Get expected_cut_site from grna_info or efficiency_data if not provided
+    if expected_cut_site is None:
+        expected_cut_site = grna_info.get('cut_site') if grna_info else None
+        if expected_cut_site is None:
+            expected_cut_site = efficiency_data.get('cut_site')
     
     # Parse AB1 files
     control_seq, control_traces = parse_ab1(control_file)
