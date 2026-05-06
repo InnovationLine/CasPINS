@@ -91,3 +91,15 @@ GraphicalAbstract.md
 
 # Temporary Office files
 ~$*
+
+# Benchmarking results (generated, can be regenerated)
+benchmarking/results/
+# Keep benchmarking scripts and documentation
+!benchmarking/scripts/
+!benchmarking/*.md
+
+# Converted manuscript text (generated)
+CasPINS_manuscript.txt
+
+# Local revision context (private working notes for the BioAdv R1 revision)
+context.md
