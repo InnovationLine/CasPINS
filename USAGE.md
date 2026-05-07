@@ -50,7 +50,7 @@ python run.py analysis --genes tp53 --similarity-threshold 50
    ```bash
    # Windows
    python -m venv crispr_env
-   .\crispr_env\Scripts\activate
+  .\crispr_env\Scripts\activate
 
    # Linux/Mac
    python -m venv crispr_env
@@ -153,7 +153,7 @@ python run.py analysis --no-archive
 
 **Note about archiving**: The pipeline archives all files from the output folder at the START of each run. Files are moved to `archive/run_YYYYMMDD_HHMMSS/` folders. This ensures the output folder only contains results from the current analysis.
 
-### `--genes <gene1> [<gene2> ...]`
+### `--genes <gene1> [<gene2>...]`
 
 Process specific genes only
 
@@ -198,7 +198,7 @@ Settings:
 Processing tp53...
   Found 2 gRNA sequences
   [SUCCESS] AB1 analysis saved: data\tp53\output\ab1_analysis_tp53.txt
-  ...
+ ...
 ```
 
 ### Example 2: Force Plotting with Low Similarity
@@ -229,7 +229,7 @@ Output:
 Processing tp53...
   Process tp53? (y/n): y
   Found 2 gRNA sequences
-  ...
+ ...
   
 Processing brca1...
   Process brca1? (y/n): n
@@ -529,9 +529,9 @@ data/
 │   ├── grna.txt              # gRNA sequence (20bp)
 │   └── mrna.txt              # mRNA reference sequence
 ├── gene2/
-│   └── ...
+│   └──...
 └── gene3/
-    └── ...
+    └──...
 ```
 
 ### Required Files

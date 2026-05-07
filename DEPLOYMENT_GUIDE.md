@@ -28,7 +28,7 @@ docker-compose up -d
 # Access at http://localhost:8501
 
 # Or build and run manually
-docker build -t caspins .
+docker build -t caspins.
 docker run -p 8501:8501 -v $(pwd)/data:/app/data caspins
 ```
 
@@ -83,12 +83,12 @@ The `Dockerfile` and `docker-compose.yml` are pre-configured:
 # docker-compose.yml
 services:
   crispr-gui:
-    build: .
+    build:.
     ports:
       - "8501:8501"
     volumes:
-      - ./data:/app/data    # Persistent data
-      - ./output:/app/output
+      -./data:/app/data    # Persistent data
+      -./output:/app/output
 ```
 
 ### Environment Variables
@@ -97,7 +97,7 @@ services:
 |----------|---------|-------------|
 | `STREAMLIT_SERVER_PORT` | 8501 | Port for web interface |
 | `STREAMLIT_SERVER_ADDRESS` | 0.0.0.0 | Bind address |
-| `DATA_DIR` | ./data | Data directory path |
+| `DATA_DIR` |./data | Data directory path |
 
 ---
 

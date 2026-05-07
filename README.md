@@ -1,7 +1,7 @@
 # CasPINS - Cas-Primer-Indel Suite
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://open-source.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18370068.svg)](https://doi.org/10.5281/zenodo.18370068)
 [![CI](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml/badge.svg)](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml)
 
@@ -51,7 +51,7 @@ python run.py grna TP53 --species human --top 10
 python run.py primers TP53
 
 # Run indel analysis
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 ```
 
 ## 🖥️ GUI Features
@@ -117,7 +117,7 @@ CasPINS/
 ├── docs/                    # Documentation
 │   ├── workflow_guide.md
 │   ├── grna_finding_guide.md
-│   └── ...
+│   └──...
 ├── tests/                   # Test suite
 └── src/                     # Source code
     ├── cli/                 # Command-line tools
@@ -145,7 +145,7 @@ your_data_directory/         # Set via GUI Settings or CRISPR_DATA_DIR env var
 │       ├── control.ab1      # Control/wild-type sample
 │       └── edited*.ab1      # Edited samples (any number)
 └── another_gene/
-    └── ...
+    └──...
 ```
 
 ## 🔧 Usage Examples
@@ -164,14 +164,14 @@ python run.py grna TP53 --save-to data/tp53/grna.txt
 
 ```bash
 # Design primers for TP53
-python run.py primers TP53 --data-dir ./data
+python run.py primers TP53 --data-dir./data
 ```
 
 ### Run Indel Analysis
 
 ```bash
 # Analyze all genes with input data
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 
 # The pipeline automatically:
 # 1. Finds all gene folders with control.ab1 and edited*.ab1 files
@@ -205,7 +205,7 @@ echo "ACGTACGTACGTACGTACGT" > data/your_gene/grna.txt
 # data/your_gene/input/edited*.ab1
 
 # 5. Run analysis
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 ```
 
 ## 📖 Documentation

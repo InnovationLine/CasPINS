@@ -72,8 +72,8 @@ def plot_indel_analysis(control_file, edited_file, output_dir, gene_name,
         validation_issues: Optional list of ValidationIssue objects
         expected_cut_site: Optional expected cut site position
     """
-    from .ab1_parser import parse_ab1
-    from .sequence_analysis import find_divergence_point
+    from.ab1_parser import parse_ab1
+    from.sequence_analysis import find_divergence_point
     
     # Initialize validation_issues if not provided
     if validation_issues is None:

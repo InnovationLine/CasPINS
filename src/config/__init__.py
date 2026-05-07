@@ -111,7 +111,14 @@ def get_species_for_dropdown() -> List[str]:
     for category in ['Mammals', 'Birds', 'Fish', 'Amphibians', 'Reptiles', 
                      'Invertebrates', 'Plants', 'Fungi', 'Bacteria']:
         if category in categories:
-            for species in sorted(categories[category]):
+            species_list = sorted(categories[category])
+            # Ensure Human is always first if present
+            if category == 'Mammals':
+                human_entry = next((s for s in species_list if s.startswith('Human')), None)
+                if human_entry:
+                    species_list.remove(human_entry)
+                    species_list.insert(0, human_entry)
+            for species in species_list:
                 dropdown_options.append(species)
     
     return dropdown_options
@@ -199,7 +206,7 @@ def normalize_species_name(name: str) -> str:
 
 
 # Import settings functions
-from .settings import (
+from.settings import (
     get_data_directory,
     set_data_directory,
     is_data_directory_configured,

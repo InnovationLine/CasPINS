@@ -20,10 +20,10 @@ from enum import Enum
 # Configure logger
 logger = logging.getLogger(__name__)
 
-from .core.grna_generator import GRNAGenerator
-from .core.sequence_analyzer import SequenceAnalyzer
-from .scoring.scoring_engine import ScoringEngine
-from .database.genome_manager import GenomeManager
+from.core.grna_generator import GRNAGenerator
+from.core.sequence_analyzer import SequenceAnalyzer
+from.scoring.scoring_engine import ScoringEngine
+from.database.genome_manager import GenomeManager
 
 
 class EditingMode(Enum):
@@ -122,7 +122,7 @@ class GRNADesigner:
             editing_mode: Type of editing (knockout, activation, repression, etc.)
         """
         self.species = self._normalize_species(species)
-        self.assembly = assembly
+        self.assembly = self._validate_assembly(species, assembly)
         self.cas_type = cas_type
         self.editing_mode = editing_mode
         
@@ -137,6 +137,27 @@ class GRNADesigner:
         # Design history
         self.history_file = os.path.join(cache_dir, 'design_history.json')
     
+    def _validate_assembly(self, species_name: str, assembly: str) -> str:
+        """Validate that assembly is valid for the given species."""
+        if not assembly:
+            return None
+            
+        try:
+            from config import get_species_by_name
+            species_info = get_species_by_name(species_name)
+            if not species_info or 'assemblies' not in species_info:
+                return assembly
+                
+            valid_assemblies = [a['name'] for a in species_info['assemblies']]
+            valid_aliases = [a.get('alias', '') for a in species_info['assemblies'] if a.get('alias')]
+            
+            if assembly in valid_assemblies or assembly in valid_aliases:
+                return assembly
+                
+            raise ValueError(f"Assembly '{assembly}' is not valid for species '{species_info['common_name']}'. Valid options: {', '.join(valid_assemblies)}")
+        except ImportError:
+            return assembly
+
     def _normalize_species(self, species: str) -> str:
         """Normalize species name to Ensembl format (genus_species)."""
         # Comprehensive mapping from common names and display formats to Ensembl names

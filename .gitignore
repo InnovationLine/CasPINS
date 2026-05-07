@@ -83,6 +83,12 @@ crispr_config.json
 Art_files/
 Figure_Legends.md
 
+# Paper/manuscript figures — kept locally, not in repo
+image/paper/
+
+# Test/scratch files
+to_be_deleted/
+
 # Manuscript and submission files (kept locally, not in repo)
 # paper.md  # Commented out - needed for collaboration
 CoverLetter_NAR.md
@@ -103,3 +109,9 @@ CasPINS_manuscript.txt
 
 # Local revision context (private working notes for the BioAdv R1 revision)
 context.md
+
+# Local environment / secrets — NEVER commit
+.env
+.env.*
+*.env
+.envrc

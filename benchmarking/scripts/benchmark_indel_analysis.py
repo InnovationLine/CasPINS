@@ -183,7 +183,7 @@ def _get_gene_dirs(data_dir: str) -> list:
     Determine the gene directories to process.
     
     If data_dir itself contains an 'input/' subfolder with AB1 files,
-    treat it as a single gene directory (e.g., .../data/ddc).
+    treat it as a single gene directory (e.g.,.../data/ddc).
     Otherwise, scan its children for gene-level directories.
     """
     input_subdir = os.path.join(data_dir, 'input')

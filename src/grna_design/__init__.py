@@ -12,13 +12,13 @@ Supports:
 __version__ = "2.0.0"
 __author__ = "CRISPR Analysis Team"
 
-from .core.grna_generator import GRNAGenerator
-from .core.sequence_analyzer import SequenceAnalyzer
-from .scoring.scoring_engine import ScoringEngine
-from .database.genome_manager import GenomeManager
-from .grna_designer import GRNADesigner, EditingMode, TargetType
-from .hdr_designer import HDRDesigner, HDRTemplate, EditType, design_knockin_template
-from .talen_designer import TALENDesigner, TALENPair, find_talen_pairs
+from.core.grna_generator import GRNAGenerator
+from.core.sequence_analyzer import SequenceAnalyzer
+from.scoring.scoring_engine import ScoringEngine
+from.database.genome_manager import GenomeManager
+from.grna_designer import GRNADesigner, EditingMode, TargetType
+from.hdr_designer import HDRDesigner, HDRTemplate, EditType, design_knockin_template
+from.talen_designer import TALENDesigner, TALENPair, find_talen_pairs
 
 __all__ = [
     # Core modules

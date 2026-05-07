@@ -92,7 +92,7 @@ def load_caspins_results(results_dir: str) -> dict:
 
 def load_crispor_results(data_dir: str, gene: str) -> dict:
     """
-    Load CRISPOR results from .xls Excel file or .tsv file.
+    Load CRISPOR results from.xls Excel file or.tsv file.
     
     Searches in benchmarking/data/CRISPRor/ for files named crispror_{gene}.xls
     Also falls back to benchmarking/data/ for crispor_{gene}.tsv (legacy format).
@@ -101,7 +101,7 @@ def load_crispor_results(data_dir: str, gene: str) -> dict:
     - targetSeq (or guideSeq, Guide Sequence) - the 20nt gRNA sequence
     - doenchScore (or Doench '16) - Doench 2016 score
     """
-    # Try .xls files in CRISPRor/ subfolder first (current data layout)
+    # Try.xls files in CRISPRor/ subfolder first (current data layout)
     filepath = None
     file_format = None
     
@@ -132,7 +132,7 @@ def load_crispor_results(data_dir: str, gene: str) -> dict:
         try:
             import xlrd
         except ImportError:
-            print(f"  ERROR: xlrd is required to read .xls files. Install with: pip install xlrd")
+            print(f"  ERROR: xlrd is required to read.xls files. Install with: pip install xlrd")
             return None
         
         try:
@@ -143,7 +143,7 @@ def load_crispor_results(data_dir: str, gene: str) -> dict:
                 print(f"  WARNING: Empty spreadsheet: {filepath}")
                 return None
             
-            # CRISPOR .xls files have metadata rows (# Name, # Sequence, etc.)
+            # CRISPOR.xls files have metadata rows (# Name, # Sequence, etc.)
             # before the actual header row. Find the real header row by looking
             # for a row that contains 'targetSeq' or '#guideId'.
             header_row_idx = None
@@ -264,7 +264,7 @@ def load_chopchop_results(data_dir: str, gene: str) -> dict:
         if filepath:
             break
         
-        # Handle filenames with stray spaces (e.g., "chopchop_vegfa .tsv")
+        # Handle filenames with stray spaces (e.g., "chopchop_vegfa.tsv")
         pattern = os.path.join(search_dir, f'chopchop_{gene_lower}*.*sv')
         matches = glob.glob(pattern)
         if matches:

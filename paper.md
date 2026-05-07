@@ -28,8 +28,6 @@ bibliography: paper.bib
 ---
 # Summary
 
-![CasPINS GUI Interface showing the integrated workflow for gRNA design, primer generation, and indel analysis. The platform provides an intuitive web-based interface accessible to researchers without programming expertise.](image/paper/1769377192491.png)
-
 CasPINS (Cas-Primer-Indel Suite) is an open-source Python platform that integrates the complete genome editing workflow—gRNA/TALEN design, primer generation, and indel analysis—into a single interactive web application. The platform supports 90+ species, 14 CRISPR-Cas variants, and provides both graphical and command-line interfaces, enabling researchers without programming expertise to efficiently design and validate genome editing experiments.
 
 # Statement of Need
@@ -63,7 +61,7 @@ CasPINS enables researchers to complete genome editing workflows that previously
 
 # AI Usage Disclosure
 
-Generative AI tools (including ChatGPT and GitHub Copilot) were used during development for coding assistance, debugging support, and documentation drafting. All AI-generated content was reviewed, tested, validated, and modified by the authors. The core scientific methodology—including algorithm selection, the data-driven parameter optimization approach, validation strategy using published datasets, open source libraries, and biological interpretation of results—reflects the authors' domain expertise developed through years of genome editing research. The authors take full responsibility for all content in this submission.
+In accordance with applicable journal policies on large language model use, we disclose that AI-assisted tools were used during development for coding support, documentation drafting, and language editing. All methodology, algorithm design, validation strategy, benchmarking, data analysis, scientific interpretation, figures, and conclusions are the sole work of the authors. No AI tools were used to generate, analyze, or interpret data, nor to produce any figure, table, or visualization in this work. All AI-assisted content was thoroughly reviewed, verified, and substantially rewritten by the authors, who take full responsibility for all content of this submission.
 
 # Acknowledgements
 

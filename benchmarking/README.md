@@ -44,17 +44,17 @@ graph TD
         A2 --> A3["Scan entire gene for<br/>NGG PAM sites"]
         A3 --> A4["Score each gRNA:<br/>Doench 2016 + Moreno-Mateos + Xu<br/>→ Composite Score"]
         A4 --> A5["Return ALL gRNAs<br/>ranked by composite score"]
-        A5 --> A6[("results/grna_design/<br/>caspins_grna_benchmark_results.json<br/>+ .csv")]
+        A5 --> A6[("results/grna_design/<br/>caspins_grna_benchmark_results.json<br/>+.csv")]
     end
 
     subgraph "Step 2: External Tool Data Collection"
         direction TB
         B1["CRISPOR<br/>crispor.tefor.net"] --> B2["For each gene:<br/>Submit gene name → hg38 → NGG"]
-        B2 --> B3["Download all guides<br/>as .xls file"]
+        B2 --> B3["Download all guides<br/>as.xls file"]
         B3 --> B4[("data/CRISPRor/<br/>crispror_{gene}.xls")]
 
         C1["CHOPCHOP<br/>chopchop.cbu.uib.no"] --> C2["For each gene:<br/>Submit gene name → hg38 → Cas9"]
-        C2 --> C3["Download results<br/>as .tsv file"]
+        C2 --> C3["Download results<br/>as.tsv file"]
         C3 --> C4[("data/CHOPCHOP/<br/>chopchop_{gene}.tsv")]
     end
 
@@ -260,13 +260,13 @@ benchmarking/
 │   └── worked_example_tp53.py           ← Complete TP53 workflow demo
 │
 ├── data/
-│   ├── CRISPRor/                        ← CRISPOR .xls files (VALID)
+│   ├── CRISPRor/                        ← CRISPOR.xls files (VALID)
 │   │   ├── crispror_tp53.xls
 │   │   ├── crispror_ate1.xls
 │   │   ├── crispror_vegfa.xls
 │   │   ├── crispror_dbh.xls
 │   │   └── crispror_emx1.xls
-│   ├── CHOPCHOP/                        ← CHOPCHOP .tsv files (VALID)
+│   ├── CHOPCHOP/                        ← CHOPCHOP.tsv files (VALID)
 │   │   ├── chopchop_tp53.tsv
 │   │   ├── chopchop_ate1.tsv
 │   │   ├── chopchop_vegfa.tsv

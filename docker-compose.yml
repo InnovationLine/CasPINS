@@ -18,6 +18,8 @@ services:
       - ./output:/app/output
       # Mount cache for genome data
       - ./cache:/app/cache
+      # Mount logs directory
+      - ./logs:/app/logs
     environment:
       - STREAMLIT_SERVER_PORT=8501
       - STREAMLIT_SERVER_ADDRESS=0.0.0.0

@@ -111,7 +111,7 @@ def check_input_folder(gene_folder):
 
 
 def process_single_edited_sample(control_file, edited_file, gene_name, grna_sequences, 
-                                mrna_seq, output_dir, sample_name):
+                                mrna_seq, output_dir, sample_name, r_squared_correction=True):
     """
     Process a single edited sample against control.
     
@@ -158,7 +158,7 @@ def process_single_edited_sample(control_file, edited_file, gene_name, grna_sequ
     # Perform indel analysis
     try:
         efficiency_data = decompose_traces_indel_analysis(
-            control_traces, edited_traces, expected_cut_site
+            control_traces, edited_traces, expected_cut_site, r_squared_correction=r_squared_correction
         )
         efficiency_data['method'] = 'Trace Decomposition'
     except Exception as e:
@@ -225,7 +225,7 @@ def process_gene_folder(gene_folder, gene_name, args):
     for ef in edited_files[:5]:  # Show first 5
         print(f"    - {os.path.basename(ef)}")
     if len(edited_files) > 5:
-        print(f"    ... and {len(edited_files) - 5} more")
+        print(f"   ... and {len(edited_files) - 5} more")
 
     # Read gRNA and mRNA sequences
     grna_file = os.path.join(gene_folder, "grna.txt")
@@ -261,9 +261,11 @@ def process_gene_folder(gene_folder, gene_name, args):
     for edited_file in edited_files:
         sample_name = os.path.basename(edited_file).replace('.ab1', '')
         
+        r_squared_correction = getattr(args, 'r_squared_correction', True)
         results = process_single_edited_sample(
             control_file, edited_file, gene_name, 
-            grna_sequences, mrna_seq, output_dir, sample_name
+            grna_sequences, mrna_seq, output_dir, sample_name,
+            r_squared_correction=r_squared_correction
         )
         
         all_results.append(results)

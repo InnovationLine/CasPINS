@@ -30,7 +30,7 @@ python run.py grna TP53 --species human --top 10
 python run.py primers TP53
 
 # Run indel analysis
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 ```
 
 ---
@@ -84,7 +84,7 @@ Select "TALEN" under Nuclease System in the GUI for TALEN pair design with:
 ### Usage
 
 ```bash
-python run.py primers GENE_NAME --data-dir ./data
+python run.py primers GENE_NAME --data-dir./data
 ```
 
 Or use the GUI Primer Design tab for interactive design with:
@@ -106,7 +106,7 @@ Or use the GUI Primer Design tab for interactive design with:
 
 ```bash
 # Analyze all genes
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 
 # The pipeline automatically:
 # 1. Finds all gene folders with AB1 files
@@ -140,7 +140,7 @@ echo "ACGTACGTACGTACGTACGT" > data/your_gene/grna.txt
 # data/your_gene/input/edited_sample1.ab1
 
 # 5. Run analysis
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 ```
 
 ### Data Directory Structure
@@ -154,7 +154,7 @@ your_data_directory/
 │       ├── control.ab1  # Control/wild-type sample
 │       └── edited*.ab1  # Edited samples
 └── another_gene/
-    └── ...
+    └──...
 ```
 
 ---
