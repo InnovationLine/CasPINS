@@ -110,6 +110,9 @@ CasPINS_manuscript.txt
 # Local revision context (private working notes for the BioAdv R1 revision)
 context.md
 
+# Private revision tooling — never expose to public/reviewers
+benchmarking/scripts/generate_response_letter.py
+
 # Local environment / secrets — NEVER commit
 .env
 .env.*
