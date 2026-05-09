@@ -86,6 +86,9 @@ Figure_Legends.md
 # Paper/manuscript figures — kept locally, not in repo
 image/paper/
 
+# Local manuscript/supplementary screenshots — kept locally, not in repo
+image/caspins_FigS*.png
+
 # Test/scratch files
 to_be_deleted/
 
@@ -100,9 +103,19 @@ GraphicalAbstract.md
 
 # Benchmarking results (generated, can be regenerated)
 benchmarking/results/
-# Keep benchmarking scripts and documentation
-!benchmarking/scripts/
-!benchmarking/*.md
+
+# Private/internal benchmarking notes from manuscript revision — keep local only
+benchmarking/JOURNAL_SUBMISSION_CHECKLIST.md
+benchmarking/MANUAL_BENCHMARKING_GUIDE.md
+benchmarking/MANUSCRIPT_REVISION_GUIDE.md
+benchmarking/README.md
+benchmarking/feature_comparison_table.md
+benchmarking/integration_novelty_narrative.md
+
+# Obsolete figure-generation prototypes superseded by generate_publication_figures.py
+benchmarking/scripts/create_publication_figures.py
+benchmarking/scripts/create_tp53_supplementary_figure.py
+benchmarking/scripts/fix_publication_figures.py
 
 # Converted manuscript text (generated)
 CasPINS_manuscript.txt
