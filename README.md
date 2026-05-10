@@ -3,9 +3,10 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18370068.svg)](https://doi.org/10.5281/zenodo.18370068)
+[![Version DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20113099-blue)](https://doi.org/10.5281/zenodo.20113099)
 [![CI](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml/badge.svg)](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml)
 
-> **Version 2.0** — This branch (`paper-revision-bioadv-r1`) contains the revised codebase submitted alongside manuscript BIOADV-2026-089-R1 to *Bioinformatics Advances*. The Zenodo archive for this version is at the DOI badge above.
+> **Version 2.0** — This branch (`paper-revision-bioadv-r1`) contains the revised codebase submitted alongside manuscript BIOADV-2026-089-R1 to *Bioinformatics Advances*. Archived on Zenodo: [doi:10.5281/zenodo.20113099](https://doi.org/10.5281/zenodo.20113099)
 
 **CasPINS** is a comprehensive, integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
 
@@ -263,11 +264,12 @@ If you use this software in your research, please cite:
   publisher = {Zenodo},
   version   = {2.0.0-rc1},
   url       = {https://github.com/InnovationLine/CasPINS},
-  doi       = {10.5281/zenodo.18370068}
+  doi       = {10.5281/zenodo.20113099}
 }
 ```
 
-> The DOI above always resolves to the latest version. The specific version DOI for the manuscript revision will be added here once minted.
+> **Concept DOI** (always resolves to the latest version): `10.5281/zenodo.18370068`
+> **Version DOI** (v2.0.0-rc1, used in the manuscript): `10.5281/zenodo.20113099`
 
 ## 🤝 Contributing
 
