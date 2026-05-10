@@ -1,9 +1,11 @@
 # CasPINS - Cas-Primer-Indel Suite
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://open-source.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18370068.svg)](https://doi.org/10.5281/zenodo.18370068)
 [![CI](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml/badge.svg)](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml)
+
+> **Version 2.0** — This branch (`paper-revision-bioadv-r1`) contains the revised codebase submitted alongside manuscript BIOADV-2026-089-R1 to *Bioinformatics Advances*. The Zenodo archive for this version is at the DOI badge above.
 
 **CasPINS** is a comprehensive, integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
 
@@ -30,7 +32,7 @@ pip install -r requirements.txt
 # Launch the GUI
 python run.py gui
 
-# Or on Windows: double-click run_gui.bat
+# Or on Windows: double-click run_gui.bat (provided in the repository)
 ```
 
 The GUI opens in your web browser and provides an intuitive interface for all features.
@@ -244,30 +246,28 @@ pip install -r requirements.txt
 python run.py gui
 ```
 
-### PyPI Installation (Planned)
+### PyPI Installation (Future)
 
-> **Note:** PyPI package publication is planned for a future release.
-
-```bash
-# Coming soon:
-pip install caspins
-caspins-gui
-```
+> **Note:** PyPI publication is planned for a future release. Use the local installation method above in the meantime.
 
 ## 📚 Citation
 
 If you use this software in your research, please cite:
 
 ```bibtex
-@software{caspins,
-  author = {Dasgupta, Rinki and Das, Kaushik},
-  title = {CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis},
-  year = {2026},
+@software{caspins2026,
+  author    = {Dasgupta, Rinki and Das, Kaushik},
+  title     = {CasPINS: An Integrated Web-Based Platform for CRISPR/TALEN gRNA Design,
+               Primer Generation, and Indel Decomposition Analysis},
+  year      = {2026},
   publisher = {Zenodo},
-  url = {https://github.com/InnovationLine/CasPINS},
-  doi = {10.5281/zenodo.18370068}
+  version   = {2.0.0-rc1},
+  url       = {https://github.com/InnovationLine/CasPINS},
+  doi       = {10.5281/zenodo.18370068}
 }
 ```
+
+> The DOI above always resolves to the latest version. The specific version DOI for the manuscript revision will be added here once minted.
 
 ## 🤝 Contributing
 
