@@ -1,26 +1,56 @@
-# CasPINS - User Guide
+# CasPINS – User Guide
+
+> **Version:** v2.0.0-rc1 | **Zenodo DOI:** [10.5281/zenodo.20113099](https://doi.org/10.5281/zenodo.20113099)
 
 ## Overview
 
-CasPINS (Cas-Primer-Indel Suite) provides a complete workflow for genome editing experiments:
+CasPINS (Cas-Primer-Indel Suite) provides a complete, integrated workflow for genome editing experiments:
 
-1. **gRNA Design** - Find optimal guide RNAs for your target genes
-2. **Primer Design** - Generate validation primers  
-3. **Indel Analysis** - Quantify editing efficiency from sequencing data
+1. **gRNA Design** – Find optimal guide RNAs for your target genes (14 Cas variants, 90+ species, 6 editing modes)
+2. **TALEN Design** – Design TALEN pairs with RVD arrays and off-target analysis
+3. **Primer Design** – Generate PCR I and PCR II primers positioned relative to the cut site
+4. **Indel Analysis** – Quantify editing efficiency from Sanger AB1 trace files (single sample or batch)
 
-This tool is **completely generic** - it works with any gene from any species.
+The primary interface is the **Streamlit GUI** launched via `python run.py gui`. A command-line interface is also available for scripting.
 
 ---
 
-## Quick Start
+## Installation and Quick Start
 
-### Option 1: GUI (Recommended)
+> **The software version described in this guide is v2.0.0-rc1.**
+> Do NOT use the default `main` branch — it contains the earlier v1 code.
+
+### Method A — Download from Zenodo (easiest, no git required)
+
+1. Visit **https://doi.org/10.5281/zenodo.20113099**
+2. Click **Download** → `InnovationLine/CasPINS-v2.0.0-rc1.zip`
+3. Unzip the archive, then open a terminal **inside the unzipped folder**:
 
 ```bash
+pip install -r requirements.txt
+python run.py gui
+# On Windows: double-click run_gui.bat
+```
+
+### Method B — Clone from GitHub
+
+```bash
+# Step 1: Clone the specific version
+git clone --branch v2.0.0-rc1 https://github.com/InnovationLine/CasPINS.git
+
+# Step 2: Enter the directory
+cd CasPINS
+
+# Step 3: Install dependencies
+pip install -r requirements.txt
+
+# Step 4: Launch the GUI
 python run.py gui
 ```
 
-### Option 2: Command Line
+The GUI opens in your web browser at **http://localhost:8501**.
+
+### Command Line (optional)
 
 ```bash
 # Find gRNAs
@@ -30,7 +60,7 @@ python run.py grna TP53 --species human --top 10
 python run.py primers TP53
 
 # Run indel analysis
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 ```
 
 ---
@@ -84,7 +114,7 @@ Select "TALEN" under Nuclease System in the GUI for TALEN pair design with:
 ### Usage
 
 ```bash
-python run.py primers GENE_NAME --data-dir ./data
+python run.py primers GENE_NAME --data-dir./data
 ```
 
 Or use the GUI Primer Design tab for interactive design with:
@@ -99,14 +129,14 @@ Or use the GUI Primer Design tab for interactive design with:
 ### Prerequisites
 
 1. Control and edited `.ab1` files in `data/<gene>/input/`
-2. gRNA sequences in `data/<gene>/grna.txt`
-3. mRNA reference in `data/<gene>/mrna.txt`
+2. gRNA sequences in `data/<gene>/grna.txt` (optional in v2 — can also be entered in the GUI directly)
+3. mRNA reference in `data/<gene>/mrna.txt` (optional — used for cut-site anchoring; analysis proceeds without it)
 
 ### Running Analysis
 
 ```bash
 # Analyze all genes
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 
 # The pipeline automatically:
 # 1. Finds all gene folders with AB1 files
@@ -140,7 +170,7 @@ echo "ACGTACGTACGTACGTACGT" > data/your_gene/grna.txt
 # data/your_gene/input/edited_sample1.ab1
 
 # 5. Run analysis
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 ```
 
 ### Data Directory Structure
@@ -154,7 +184,7 @@ your_data_directory/
 │       ├── control.ab1  # Control/wild-type sample
 │       └── edited*.ab1  # Edited samples
 └── another_gene/
-    └── ...
+    └──...
 ```
 
 ---

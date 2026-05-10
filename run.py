@@ -15,7 +15,7 @@ Examples:
     python run.py gui
     python run.py grna TP53 --species human --top 10
     python run.py primers TP53
-    python run.py analysis --data-dir ./data
+    python run.py analysis --data-dir./data
 """
 
 import sys

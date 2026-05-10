@@ -6,8 +6,8 @@ Performs detailed analysis of AB1 files and generates reports
 from datetime import datetime
 from Bio import SeqIO
 from Bio.Seq import Seq
-from .ab1_parser import get_quality_scores
-from .sequence_analysis import find_grna_in_sequence
+from.ab1_parser import get_quality_scores
+from.sequence_analysis import find_grna_in_sequence
 
 
 def analyze_ab1_details(control_file, edited_file, grna_sequences, mrna_seq, gene_name):
@@ -113,8 +113,8 @@ def _compare_sequences(control_seq, edited_seq, analysis_lines):
                 analysis_lines.append(f"  First difference at position: {i}")
                 context_start = max(0, i-10)
                 context_end = min(min_len, i+20)
-                analysis_lines.append(f"    Control: ...{control_seq[context_start:context_end]}...")
-                analysis_lines.append(f"    Edited:  ...{edited_seq[context_start:context_end]}...")
+                analysis_lines.append(f"    Control:...{control_seq[context_start:context_end]}...")
+                analysis_lines.append(f"    Edited: ...{edited_seq[context_start:context_end]}...")
                 break
         else:
             if len(control_seq) == len(edited_seq):
@@ -146,7 +146,7 @@ def _analyze_grnas_in_sequences(grna_sequences, control_seq, edited_seq, analysi
             if pos is not None:
                 analysis_lines.append(f"  ✓ Found in CONTROL on {strand} strand at position {pos}")
                 context = control_seq[max(0,pos-10):min(len(control_seq),pos+len(grna_20)+10)]
-                analysis_lines.append(f"    Context: ...{context}...")
+                analysis_lines.append(f"    Context:...{context}...")
             else:
                 analysis_lines.append(f"  ✗ Not found in CONTROL sequence")
                 

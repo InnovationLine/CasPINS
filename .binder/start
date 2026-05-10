@@ -1,3 +1,0 @@
-#!/bin/bash
-# Launch the CasPINS - Cas-Primer-Indel Suite GUI
-exec streamlit run crispr_gui.py --server.port=8888 --server.address=0.0.0.0 

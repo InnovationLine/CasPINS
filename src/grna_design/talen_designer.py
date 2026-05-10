@@ -278,7 +278,7 @@ class TALENDesigner:
             use_specific_rvd: Use NK instead of NN for G (higher specificity)
         """
         self.species = species
-        self.assembly = assembly
+        self.assembly = self._validate_assembly(species, assembly)
         self.min_arm_length, self.max_arm_length = arm_length
         self.min_spacer, self.max_spacer = spacer_length
         self.platform = platform
@@ -287,11 +287,32 @@ class TALENDesigner:
         # Initialize sequence analyzer for online lookups
         self.analyzer = None
         self._init_analyzer()
+        
+    def _validate_assembly(self, species_name: str, assembly: str) -> str:
+        """Validate that assembly is valid for the given species."""
+        if not assembly:
+            return None
+            
+        try:
+            from config import get_species_by_name
+            species_info = get_species_by_name(species_name)
+            if not species_info or 'assemblies' not in species_info:
+                return assembly
+                
+            valid_assemblies = [a['name'] for a in species_info['assemblies']]
+            valid_aliases = [a.get('alias', '') for a in species_info['assemblies'] if a.get('alias')]
+            
+            if assembly in valid_assemblies or assembly in valid_aliases:
+                return assembly
+                
+            raise ValueError(f"Assembly '{assembly}' is not valid for species '{species_info['common_name']}'. Valid options: {', '.join(valid_assemblies)}")
+        except ImportError:
+            return assembly
     
     def _init_analyzer(self):
         """Initialize the sequence analyzer for fetching sequences."""
         try:
-            from .core.sequence_analyzer import SequenceAnalyzer
+            from.core.sequence_analyzer import SequenceAnalyzer
             cache_dir = os.path.join(os.path.expanduser('~'), '.crispr_cache', 'sequences')
             os.makedirs(cache_dir, exist_ok=True)
             self.analyzer = SequenceAnalyzer(cache_dir)

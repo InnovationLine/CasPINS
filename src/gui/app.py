@@ -187,6 +187,7 @@ from utils.primer_design import (
     PrimerDesigner
 )
 from utils.sequence_analysis import find_grna_in_sequence
+from utils.run_logger import RunLogger
 from utils.ab1_parser import parse_ab1
 from utils.indel_analysis import decompose_traces_indel_analysis, calculate_editing_efficiency_fallback
 from utils.visualization_multi import plot_indel_analysis_multi, create_summary_report
@@ -201,7 +202,7 @@ from utils.tide_visualization import (
 
 # Import species configuration
 try:
-    from config import get_species_for_dropdown, get_crispr_systems, get_editing_modes
+    from config import get_species_for_dropdown, get_crispr_systems, get_editing_modes, get_species_by_name
 except ImportError:
     # Fallback if config not available
     def get_species_for_dropdown():
@@ -216,6 +217,8 @@ except ImportError:
                 {"name": "Cas12a", "pam": "TTTV"}]
     def get_editing_modes():
         return [{"name": "knockout", "description": "Gene disruption via NHEJ"}]
+    def get_species_by_name(name):
+        return None
 
 # Import settings configuration
 try:
@@ -256,18 +259,18 @@ st.set_page_config(
 # Custom CSS for better styling
 st.markdown("""
 <style>
-    .main {
+   .main {
         padding-top: 1rem;
     }
-    .stTabs [data-baseweb="tab-list"] {
+   .stTabs [data-baseweb="tab-list"] {
         gap: 24px;
     }
-    .stTabs [data-baseweb="tab"] {
+   .stTabs [data-baseweb="tab"] {
         height: 50px;
         padding-left: 20px;
         padding-right: 20px;
     }
-    .success-box {
+   .success-box {
         padding: 1rem;
         border-radius: 0.5rem;
         background-color: #d4edda;
@@ -275,7 +278,7 @@ st.markdown("""
         color: #155724;
         margin: 1rem 0;
     }
-    .info-box {
+   .info-box {
         padding: 1rem;
         border-radius: 0.5rem;
         background-color: #d1ecf1;
@@ -283,7 +286,7 @@ st.markdown("""
         color: #0c5460;
         margin: 1rem 0;
     }
-    .warning-box {
+   .warning-box {
         padding: 1rem;
         border-radius: 0.5rem;
         background-color: #fff3cd;
@@ -364,7 +367,7 @@ def main():
         st.markdown("---")
         
         if TKINTER_AVAILABLE:
-            if st.button("📂 Browse & Select Folder", type="primary", use_container_width=True, key="browse_folder_btn"):
+            if st.button("📂 Browse & Select Folder", type="primary", width="stretch", key="browse_folder_btn"):
                 selected_folder = open_folder_picker()
                 if selected_folder:
                     st.session_state.data_directory = selected_folder
@@ -419,7 +422,7 @@ def main():
             ]
             
             for label, qpath in quick_paths:
-                if st.button(f"📁 {label}", key=f"quick_{hash(qpath)}", use_container_width=True):
+                if st.button(f"📁 {label}", key=f"quick_{hash(qpath)}", width="stretch"):
                     try:
                         os.makedirs(qpath, exist_ok=True)
                         st.session_state.data_directory = qpath
@@ -428,16 +431,47 @@ def main():
                     except Exception as e:
                         st.error(f"❌ {e}")
         
-        # Show status
+        # Show status and Project Structure
         data_dir = st.session_state.data_directory
         if data_dir and os.path.isdir(data_dir):
-            st.success(f"📂 Active: `{data_dir}`")
+            st.markdown("---")
+            st.subheader("📊 Project Structure")
             
-            # List existing genes
-            existing_genes = [d.upper() for d in os.listdir(data_dir)
+            with st.expander("ℹ️ How data is stored", expanded=False):
+                st.markdown("""
+                CasPINS organizes data by gene:
+                ```text
+                data_directory/
+                └── gene_name/
+                    ├── grna.txt
+                    ├── mrna.txt
+                    ├── primers/
+                    ├── input/  (for indels)
+                    │   ├── control.ab1
+                    │   └── edited.ab1
+                    └── output/ (results)
+                ```
+                """)
+            
+            # List existing genes and their contents
+            existing_genes = [d for d in os.listdir(data_dir)
                             if os.path.isdir(os.path.join(data_dir, d)) and not d.startswith('.')]
+            
             if existing_genes:
-                st.markdown(f"**Genes Found:** {', '.join(existing_genes[:5])}{'...' if len(existing_genes) > 5 else ''}")
+                with st.expander("📁 Current Project Files", expanded=True):
+                    for gene in sorted(existing_genes):
+                        gene_path = os.path.join(data_dir, gene)
+                        
+                        # Count files inside
+                        grna_exists = "✅" if os.path.exists(os.path.join(gene_path, "grna.txt")) else "❌"
+                        mrna_exists = "✅" if os.path.exists(os.path.join(gene_path, "mrna.txt")) else "❌"
+                        
+                        # Check inputs
+                        input_path = os.path.join(gene_path, "input")
+                        ab1_count = len([f for f in os.listdir(input_path) if f.endswith('.ab1')]) if os.path.exists(input_path) else 0
+                        
+                        st.markdown(f"**{gene.upper()}**")
+                        st.caption(f"gRNA: {grna_exists} | mRNA: {mrna_exists} | AB1 files: {ab1_count}")
             
             # Create new gene folder
             with st.expander("➕ Create New Gene Folder"):
@@ -530,11 +564,27 @@ def grna_design_tab():
         # Extract simple species name
         species = species_display.split('(')[0].strip().lower().replace(' ', '_')
         
-        # Assembly (optional)
-        assembly = st.text_input("Genome Assembly (optional)", 
-                                placeholder="e.g., GRCh38, mm39, rn7",
-                                help="Leave empty for default assembly",
-                                key="grna_assembly")
+        # Get assemblies for selected species
+        species_info = get_species_by_name(species_display.split('(')[0].strip())
+        assemblies = []
+        if species_info and 'assemblies' in species_info:
+            assemblies = [f"{a['name']} ({a.get('alias', '')})" if a.get('alias') else a['name'] for a in species_info['assemblies']]
+            
+        assembly_options = ["Auto (Default)"] + assemblies
+
+        # Assembly Selection
+        assembly_selection = st.selectbox(
+            "Genome Assembly",
+            assembly_options,
+            index=0,
+            help="Select specific assembly for this species, or use the default",
+            key="grna_assembly"
+        )
+        
+        if assembly_selection == "Auto (Default)":
+            assembly = None
+        else:
+            assembly = assembly_selection.split(' ')[0].strip()
         
         # Editing Mode - NEW
         st.markdown("#### Editing Mode")
@@ -619,16 +669,16 @@ def grna_design_tab():
                      str(top_n)]
         }
         settings_df = pd.DataFrame(settings_data)
-        st.dataframe(settings_df, hide_index=True, use_container_width=True)
+        st.dataframe(settings_df, hide_index=True, width="stretch")
     
     # Design buttons
     col_btn1, col_btn2 = st.columns([3, 1])
     
     with col_btn1:
-        find_clicked = st.button("🚀 Find gRNAs", type="primary", use_container_width=True, key="grna_find_button")
+        find_clicked = st.button("🚀 Find gRNAs", type="primary", width="stretch", key="grna_find_button")
     
     with col_btn2:
-        if st.button("🗑️ Clear Results", use_container_width=True, key="grna_clear_button"):
+        if st.button("🗑️ Clear Results", width="stretch", key="grna_clear_button"):
             st.session_state.grna_results = None
             st.session_state.selected_grnas = []
             st.session_state.grna_full_data = {}
@@ -668,9 +718,17 @@ def grna_design_tab():
                         target_type = 'ensembl_gene'
                     else:
                         target_type = 'sequence'
-                    
+                        
                     logger.info(f"Target type resolved to: {target_type}")
                     
+                    data_dir = st.session_state.get('data_directory', '')
+                    run_log = RunLogger(data_dir, "talen_design", gene_name)
+                    run_log.log_parameters({
+                        "species": species, "assembly": assembly,
+                        "n_results": top_n, "target_type": target_type,
+                        "check_off_targets": check_off_targets
+                    })
+
                     # Design TALENs
                     results = talen_designer.design_talens(
                         target=gene_name,
@@ -679,9 +737,16 @@ def grna_design_tab():
                         include_off_targets=check_off_targets
                     )
                     
-                    logger.info(f"TALEN Design results: {len(results.get('talen_pairs', []))} pairs found")
+                    num_pairs = len(results.get('talen_pairs', []))
+                    logger.info(f"TALEN Design results: {num_pairs} pairs found")
+                    run_log.log_results({"talen_pairs_found": num_pairs})
+                    
                     if 'error' in results:
                         logger.warning(f"Design error: {results['error']}")
+                        run_log.log_error(results['error'])
+                        
+                    log_file_path = run_log.finish()
+                    st.success(f"Log saved: {log_file_path}")
                     
                     # Store results (mark as TALEN results)
                     results['nuclease_type'] = 'TALEN'
@@ -759,6 +824,14 @@ def grna_design_tab():
                     
                     logger.info(f"Target type resolved to: {target_type}")
                     
+                    data_dir = st.session_state.get('data_directory', '')
+                    run_log = RunLogger(data_dir, "grna_design", gene_name)
+                    run_log.log_parameters({
+                        "species": species, "assembly": assembly, "cas_type": cas_type_simple,
+                        "n_results": top_n, "filters": filters, "target_type": target_type,
+                        "check_off_targets": check_off_targets
+                    })
+                    
                     # Design gRNAs
                     results = designer.design_grnas(
                         target=gene_name,
@@ -768,9 +841,16 @@ def grna_design_tab():
                         target_type=target_type
                     )
                     
-                    logger.info(f"Design results: {len(results.get('grnas', []))} gRNAs found")
+                    num_grnas = len(results.get('grnas', []))
+                    logger.info(f"Design results: {num_grnas} gRNAs found")
+                    run_log.log_results({"grnas_found": num_grnas})
+                    
                     if 'error' in results:
                         logger.warning(f"Design error: {results['error']}")
+                        run_log.log_error(results['error'])
+                        
+                    log_file_path = run_log.finish()
+                    st.success(f"Log saved: {log_file_path}")
                     
                     # Store results
                     results['nuclease_type'] = 'CRISPR'
@@ -970,7 +1050,7 @@ def display_talen_results(talen_pairs: list, metadata: dict = None):
     # Display the table
     st.dataframe(
         df,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "Rank": st.column_config.NumberColumn("Rank", help="Sequential rank by position", width="small"),
@@ -1205,7 +1285,7 @@ def display_grna_results(grnas, metadata=None):
     edited_df = st.data_editor(
         df,
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
         column_config=column_config,
         disabled=disabled_cols,
         key="grna_selector"
@@ -1387,6 +1467,22 @@ def primer_design_tab():
     # Input method selection
     st.subheader("🎯 Target Selection")
     
+    # Auto-import button if data exists in session state from gRNA design
+    if st.session_state.get('grna_gene_input') or st.session_state.get('grna_species_expanded'):
+        if st.button("🔄 Import settings and gRNAs from gRNA Design", width="stretch", help="Load gene, species, and selected gRNAs from the design tab"):
+            if 'grna_gene_input' in st.session_state:
+                st.session_state.primer_gene_generic = st.session_state.grna_gene_input
+            if 'grna_species_expanded' in st.session_state:
+                st.session_state.primer_species_generic = st.session_state.grna_species_expanded
+            
+            selected_grnas = st.session_state.get('selected_grnas', [])
+            if selected_grnas:
+                # selected_grnas is a list of plain sequence strings
+                grna_strings = [g['sequence'] if isinstance(g, dict) else g for g in selected_grnas]
+                st.session_state.primer_grna_input = '\n'.join(grna_strings)
+                st.session_state.primer_input_method = "🧬 Paste/Upload Sequence"
+            st.rerun()
+            
     col1, col2 = st.columns([2, 1])
     
     with col1:
@@ -1830,7 +1926,7 @@ def primer_design_tab():
                     target_end = st.number_input("Target end position", min_value=1, value=100, key="primer_target_end")
         
         # Design button
-        if st.button("🚀 Design Primers", type="primary", use_container_width=True, key="primer_design_generic"):
+        if st.button("🚀 Design Primers", type="primary", width="stretch", key="primer_design_generic"):
             if not target_sequence:
                 st.error("Please provide a target sequence")
                 return
@@ -2017,7 +2113,7 @@ def display_enhanced_primer_results(grna_positions, target_sequence, gene_name, 
             })
         
         pcr1_df = pd.DataFrame(pcr1_data)
-        st.dataframe(pcr1_df, use_container_width=True, hide_index=True)
+        st.dataframe(pcr1_df, width="stretch", hide_index=True)
     
     # Display PCR II primers
     if results.get('pcr2_primers'):
@@ -2035,7 +2131,7 @@ def display_enhanced_primer_results(grna_positions, target_sequence, gene_name, 
             })
         
         pcr2_df = pd.DataFrame(pcr2_data)
-        st.dataframe(pcr2_df, use_container_width=True, hide_index=True)
+        st.dataframe(pcr2_df, width="stretch", hide_index=True)
     
     # Display quality metrics
     if results.get('quality_metrics'):
@@ -2341,49 +2437,89 @@ def single_sample_analysis():
     col1, col2 = st.columns(2)
     
     with col1:
-        # Gene selection - use configured data directory
-        data_dir = st.session_state.get('data_directory', '')
-        if data_dir and os.path.exists(data_dir):
-            available_genes = [d.upper() for d in os.listdir(data_dir) 
-                             if os.path.isdir(os.path.join(data_dir, d)) and not d.startswith('.')]
-            if available_genes:
-                gene_name = st.selectbox("Select Gene", available_genes, key="indel_gene_select")
-            else:
-                st.warning("No gene folders found in data directory.")
-                gene_name = st.text_input("Gene Name", placeholder="Enter gene name", key="indel_gene_input")
-        else:
-            st.warning("⚠️ Please set a data directory in the sidebar settings")
-            gene_name = st.text_input("Gene Name", key="indel_gene_input")
+        # Gene name — free text, no folder required
+        gene_name = st.text_input(
+            "Gene Name",
+            placeholder="e.g., DDC, TP53, SLC18A2",
+            help="Enter gene name. If a matching folder exists in your data directory, gRNA and mRNA will be loaded automatically.",
+            key="indel_gene_input"
+        )
         
         # File upload
         st.markdown("#### Upload AB1 Files")
-        control_file = st.file_uploader("Control AB1 file", type=['ab1'], key="indel_control_file")
+        control_file = st.file_uploader("Control AB1 file (unedited)", type=['ab1'], key="indel_control_file")
         edited_file = st.file_uploader("Edited AB1 file", type=['ab1'], key="indel_edited_file")
+        
+        # gRNA input — auto-filled from folder if available, manual entry otherwise
+        st.markdown("#### gRNA Sequence (optional)")
+        
+        # Try to pre-fill from gene folder
+        data_dir = st.session_state.get('data_directory', '')
+        prefill_grna = ""
+        grna_source = "manual"
+        if gene_name and data_dir:
+            grna_file = os.path.join(data_dir, gene_name.lower(), "grna.txt")
+            if os.path.exists(grna_file):
+                with open(grna_file, 'r') as f:
+                    loaded = [ln.strip().upper() for ln in f if ln.strip()]
+                if loaded:
+                    prefill_grna = '\n'.join(loaded)
+                    grna_source = "folder"
+        
+        grna_input = st.text_area(
+            "gRNA sequence(s)",
+            value=prefill_grna,
+            placeholder="ACGTACGTACGTACGTACGT\n(one per line, 20nt each)",
+            height=80,
+            help="Used to locate the expected cut site in the trace. If left blank, CasPINS will analyze the full trace without cut-site anchoring.",
+            key="indel_grna_manual"
+        )
+        if grna_source == "folder" and prefill_grna:
+            st.caption(f"✅ Auto-loaded from `{gene_name.lower()}/grna.txt`")
+        elif grna_input:
+            st.caption("✏️ Using manually entered gRNA(s)")
+        else:
+            st.caption("ℹ️ No gRNA provided — analysis will run without cut-site anchoring")
     
     with col2:
-        # Display gene info if available
+        # Show what we found in the gene folder (informational only)
         if gene_name and data_dir:
             gene_folder = os.path.join(data_dir, gene_name.lower())
             if os.path.exists(gene_folder):
-                grna_file = os.path.join(gene_folder, "grna.txt")
-                if os.path.exists(grna_file):
-                    with open(grna_file, 'r') as f:
-                        grnas = [line.strip() for line in f if line.strip()]
-                    st.info(f"Found {len(grnas)} gRNA(s) for {gene_name}")
-                    with st.expander("View gRNAs"):
-                        for i, grna in enumerate(grnas):
-                            st.text(f"{i+1}. {grna}")
+                mrna_path = os.path.join(gene_folder, "mrna.txt")
+                mrna_exists = os.path.exists(mrna_path)
+                st.info(
+                    f"📁 Gene folder found: `{gene_name.lower()}/`\n\n"
+                    f"• gRNA file: {'✅' if prefill_grna else '❌'}\n"
+                    f"• mRNA file: {'✅' if mrna_exists else '❌ (optional)'}"
+                )
+            else:
+                st.info("ℹ️ No gene folder found — analysis will use uploaded files and entered gRNA only.")
+        
+        st.markdown("#### Analysis Settings")
+        r_squared_correction = st.checkbox(
+            "Conservative mode (R² correction)",
+            value=False,
+            help="Multiply editing estimate by R² goodness-of-fit, producing conservative estimates matching TIDE/ICE behavior on noisy data. Default OFF — CasPINS' combined-channel NNLS extracts more signal from noisy traces by design; low R² is reported as a confidence warning rather than suppressing the estimate."
+        )
     
     # Analysis button
-    if st.button("🔬 Analyze Indels", type="primary", use_container_width=True, key="indel_analyze_button"):
-        if not all([control_file, edited_file, gene_name]):
-            st.error("Please provide all required inputs")
+    if st.button("🔬 Analyze Indels", type="primary", width="stretch", key="indel_analyze_button"):
+        if not control_file or not edited_file:
+            st.error("Please upload both control and edited AB1 files.")
             return
+        if not gene_name:
+            gene_name = "unknown"
         
-        run_single_sample_analysis(control_file, edited_file, gene_name)
+        grna_sequences = [ln.strip().upper() for ln in grna_input.split('\n') if ln.strip()] if grna_input else []
+        run_single_sample_analysis(
+            control_file, edited_file, gene_name,
+            grna_sequences=grna_sequences,
+            r_squared_correction=r_squared_correction
+        )
 
 
-def run_single_sample_analysis(control_file, edited_file, gene_name):
+def run_single_sample_analysis(control_file, edited_file, gene_name, grna_sequences=None, r_squared_correction=True):
     """Run indel analysis on a single sample with TIDE-style visualization."""
     with st.spinner("Analyzing indels..."):
         try:
@@ -2396,38 +2532,46 @@ def run_single_sample_analysis(control_file, edited_file, gene_name):
                 tmp_edited.write(edited_file.read())
                 edited_path = tmp_edited.name
             
-            # Read gene data - use configured data directory
+            # Try to load gRNA from folder if not supplied from UI
+            if grna_sequences is None:
+                grna_sequences = []
             data_dir = st.session_state.get('data_directory', '')
             gene_folder = os.path.join(data_dir, gene_name.lower()) if data_dir else ""
             
-            if not gene_folder or not os.path.exists(gene_folder):
-                st.error("Gene folder not found. Please set data directory in sidebar.")
-                return
+            if not grna_sequences and gene_folder and os.path.exists(gene_folder):
+                grna_path = os.path.join(gene_folder, "grna.txt")
+                if os.path.exists(grna_path):
+                    with open(grna_path, 'r') as f:
+                        grna_sequences = [ln.strip().upper() for ln in f if ln.strip()]
             
-            # Read gRNA and mRNA
-            with open(os.path.join(gene_folder, "grna.txt"), 'r') as f:
-                grna_sequences = [line.strip().upper() for line in f if line.strip()]
-            
-            with open(os.path.join(gene_folder, "mrna.txt"), 'r') as f:
-                mrna_seq = ''.join(line.strip() for line in f).upper()
+            # Try to load mRNA from folder (optional — used only for cut-site location)
+            mrna_seq = None
+            if gene_folder and os.path.exists(gene_folder):
+                mrna_path = os.path.join(gene_folder, "mrna.txt")
+                if os.path.exists(mrna_path):
+                    with open(mrna_path, 'r') as f:
+                        mrna_seq = ''.join(ln.strip() for ln in f).upper()
             
             # Parse AB1 files
             control_seq, control_traces = parse_ab1(control_path)
             edited_seq, edited_traces = parse_ab1(edited_path)
             
-            # Find cut sites
-            cut_sites = []
-            for grna in grna_sequences:
-                pos, strand, cut_site = find_grna_in_sequence(mrna_seq, grna)
-                if cut_site is not None:
-                    cut_sites.append(cut_site)
-            
-            expected_cut_site = cut_sites[0] if cut_sites else None
+            # Find cut sites (requires both gRNA sequences and mRNA reference)
+            expected_cut_site = None
+            if grna_sequences and mrna_seq:
+                cut_sites = []
+                for grna in grna_sequences:
+                    pos, strand, cut_site = find_grna_in_sequence(mrna_seq, grna)
+                    if cut_site is not None:
+                        cut_sites.append(cut_site)
+                expected_cut_site = cut_sites[0] if cut_sites else None
+            elif grna_sequences and not mrna_seq:
+                st.info("ℹ️ No mRNA reference file found — cut site will not be anchored. Analysis runs on full trace.")
             
             # Perform indel analysis
             try:
                 efficiency_data = decompose_traces_indel_analysis(
-                    control_traces, edited_traces, expected_cut_site
+                    control_traces, edited_traces, expected_cut_site, r_squared_correction=r_squared_correction
                 )
                 efficiency_data['method'] = 'Trace Decomposition'
             except:
@@ -2438,6 +2582,19 @@ def run_single_sample_analysis(control_file, edited_file, gene_name):
             
             # Display results - TIDE STYLE IN GUI using native Streamlit components
             st.success("✅ Analysis Complete!")
+            
+            # Show R² quality warning when model fit is poor — inform without suppressing
+            r_sq = efficiency_data.get('quality_score', 0) / 100.0
+            if r_sq < 0.3:
+                st.warning(
+                    f"⚠️ Low model fit (R² = {r_sq:.3f}). This may reflect inherently noisy Sanger traces "
+                    f"(e.g., multiple large indels, poor base-calling). CasPINS reports the full signal extracted "
+                    f"from all trace channels. Enable 'Conservative mode' in Analysis Settings for TIDE/ICE-comparable "
+                    f"conservative estimates, or consider NGS-based quantification (e.g., CRISPResso2) for samples "
+                    f"with R² < 0.3."
+                )
+            elif r_sq < 0.5:
+                st.info(f"ℹ️ Moderate model fit (R² = {r_sq:.3f}). Results are usable but treat efficiency estimate with moderate confidence.")
             
             # Display results using native Streamlit components
             display_results_streamlit(st, efficiency_data, f"{gene_name.upper()} - Single Sample")
@@ -2477,8 +2634,18 @@ def run_single_sample_analysis(control_file, edited_file, gene_name):
             # Generate comprehensive analysis plot
             st.markdown("### 🖼️ Indel Analysis Visualization")
             
-            output_dir = ensure_output_dir(gene_folder)
+            # Determine a safe output directory regardless of whether gene_folder exists
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            if gene_folder and os.path.exists(gene_folder):
+                output_dir = ensure_output_dir(gene_folder)
+            else:
+                # Fall back to a session-scoped temp output folder
+                fallback_out = os.path.join(
+                    st.session_state.get('data_directory', tempfile.gettempdir()),
+                    "caspins_output"
+                )
+                os.makedirs(fallback_out, exist_ok=True)
+                output_dir = fallback_out
             
             # Create TIDE-style figure
             try:
@@ -2512,25 +2679,25 @@ def run_single_sample_analysis(control_file, edited_file, gene_name):
             except Exception as e:
                 st.warning(f"Could not generate TIDE-style plot: {e}")
             
-            # Also generate standard plot
-            plot_path = plot_indel_analysis_multi(
-                control_path, edited_path, output_dir, gene_name,
-                "single_analysis", efficiency_data, grna_sequences, timestamp
-            )
-            
-            # Display standard plot in expander
-            if os.path.exists(plot_path):
-                with st.expander("View Standard Analysis Plot"):
-                    st.image(plot_path, caption="Standard Indel Analysis Results")
-                    
-                    with open(plot_path, 'rb') as f:
-                        st.download_button(
-                            label="📥 Download Standard Plot",
-                            data=f.read(),
-                            file_name=f"indel_analysis_{gene_name}_{timestamp}.png",
-                            mime="image/png",
-                            key="download_standard_plot"
-                        )
+            # Also generate standard plot (optional secondary visualization)
+            try:
+                plot_path = plot_indel_analysis_multi(
+                    control_path, edited_path, output_dir, gene_name,
+                    "single_analysis", efficiency_data, grna_sequences, timestamp
+                )
+                if plot_path and os.path.exists(plot_path):
+                    with st.expander("View Standard Analysis Plot"):
+                        st.image(plot_path, caption="Standard Indel Analysis Results")
+                        with open(plot_path, 'rb') as f:
+                            st.download_button(
+                                label="📥 Download Standard Plot",
+                                data=f.read(),
+                                file_name=f"indel_analysis_{gene_name}_{timestamp}.png",
+                                mime="image/png",
+                                key="download_standard_plot"
+                            )
+            except Exception:
+                pass  # Secondary plot is optional; main TIDE-style plot already shown
             
             # Cleanup temp files
             os.unlink(control_path)
@@ -2597,7 +2764,7 @@ def batch_analysis():
                 st.markdown(f"🔴 **{gene_info['gene']}**: {gene_info['edited_count']} edited samples, missing: `{missing}`")
         
         # Options
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         
         with col1:
             skip_genes = st.multiselect("Skip genes (optional)", 
@@ -2607,11 +2774,14 @@ def batch_analysis():
         
         with col2:
             archive_previous = st.checkbox("Archive previous results", value=True, key="batch_archive")
+            
+        with col3:
+            r_squared_correction = st.checkbox("Apply R² Correction", value=True, key="batch_r_squared")
         
         # Run batch analysis
         if ready_genes:
-            if st.button("🚀 Run Batch Analysis", type="primary", use_container_width=True, key="batch_run_button"):
-                run_batch_analysis(skip_genes, archive_previous)
+            if st.button("🚀 Run Batch Analysis", type="primary", width="stretch", key="batch_run_button"):
+                run_batch_analysis(skip_genes, archive_previous, r_squared_correction)
         else:
             st.error("❌ No genes are ready for batch analysis. Please add missing files.")
         
@@ -2666,7 +2836,7 @@ def batch_analysis():
             ├── control.ab1   # Control sample AB1 file
             ├── editedA1.ab1  # Edited sample 1
             ├── editedA2.ab1  # Edited sample 2
-            └── ...           # More edited samples (edited*.ab1)
+            └──...           # More edited samples (edited*.ab1)
         ```
         """)
 
@@ -2729,7 +2899,7 @@ def check_gene_folder_requirements(gene_folder, gene_name):
     return issues, control_file, edited_files
 
 
-def run_batch_analysis(skip_genes, archive_previous):
+def run_batch_analysis(skip_genes, archive_previous, r_squared_correction=True):
     """Run batch analysis on all prepared genes and store in session state."""
     from src.indel_analysis_multi import process_gene_folder
     
@@ -2739,6 +2909,7 @@ def run_batch_analysis(skip_genes, archive_previous):
             self.skip_genes = [g.lower() for g in skip_genes]
             self.force = False
             self.no_archive = not archive_previous
+            self.r_squared_correction = r_squared_correction
     
     args = Args()
     
@@ -3006,7 +3177,7 @@ def display_batch_results():
             'Folder': r['folder']
         })
 
-    st.dataframe(pd.DataFrame(summary_data), hide_index=True, use_container_width=True)
+    st.dataframe(pd.DataFrame(summary_data), hide_index=True, width="stretch")
     
     # Show detailed errors for failed genes
     failed_genes = [r for r in all_results if not r['success']]
@@ -3030,7 +3201,7 @@ def display_batch_results():
                     ├── control.ab1   # Control sample AB1 file
                     ├── editedA1.ab1  # Edited sample 1
                     ├── editedA2.ab1  # Edited sample 2
-                    └── ...           # More edited samples
+                    └──...           # More edited samples
                 ```
                 """)
     
@@ -3191,7 +3362,7 @@ def documentation_tab():
     
     ### Support & Updates
     - **GitHub**: Report issues and request features
-    - **Documentation**: See `/docs/` folder for detailed guides
+    - **Documentation**: See [our GitHub documentation](https://github.com/InnovationLine/CasPINS/tree/main/docs) for detailed guides
     - **Updates**: Tool is actively maintained with regular enhancements
     """)
     
@@ -3207,19 +3378,13 @@ def documentation_tab():
         ]
         
         for doc_file, title in doc_files:
+            github_url = f"https://github.com/InnovationLine/CasPINS/blob/main/{doc_file}"
+            st.markdown(f"#### 📄 [{title}]({github_url})")
             if os.path.exists(doc_file):
-                st.markdown(f"#### 📄 {title}")
-                with open(doc_file, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    # Display first 500 characters as preview
-                    if len(content) > 500:
-                        st.markdown(content[:500] + "...")
-                        st.info("Full documentation available in the file")
-                    else:
-                        st.markdown(content)
-                st.markdown("---")
-            else:
-                st.warning(f"Documentation file not found: {doc_file}")
+                with st.expander(f"Read {title} inline"):
+                    with open(doc_file, 'r', encoding='utf-8') as f:
+                        st.markdown(f.read())
+            st.markdown("---")
     
     # Add version information
     st.markdown("---")

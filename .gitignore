@@ -83,6 +83,15 @@ crispr_config.json
 Art_files/
 Figure_Legends.md
 
+# Paper/manuscript figures — kept locally, not in repo
+image/paper/
+
+# Local manuscript/supplementary screenshots — kept locally, not in repo
+image/caspins_FigS*.png
+
+# Test/scratch files
+to_be_deleted/
+
 # Manuscript and submission files (kept locally, not in repo)
 # paper.md  # Commented out - needed for collaboration
 CoverLetter_NAR.md
@@ -91,3 +100,37 @@ GraphicalAbstract.md
 
 # Temporary Office files
 ~$*
+
+# Benchmarking results (generated, can be regenerated)
+benchmarking/results/
+
+# Private/internal benchmarking notes from manuscript revision — keep local only
+benchmarking/JOURNAL_SUBMISSION_CHECKLIST.md
+benchmarking/MANUAL_BENCHMARKING_GUIDE.md
+benchmarking/MANUSCRIPT_REVISION_GUIDE.md
+benchmarking/README.md
+benchmarking/feature_comparison_table.md
+benchmarking/integration_novelty_narrative.md
+
+# Obsolete figure-generation prototypes superseded by generate_publication_figures.py
+benchmarking/scripts/create_publication_figures.py
+benchmarking/scripts/create_tp53_supplementary_figure.py
+benchmarking/scripts/fix_publication_figures.py
+
+# Converted manuscript text (generated)
+CasPINS_manuscript.txt
+
+# Local revision context (private working notes for the BioAdv R1 revision)
+context.md
+
+# Private revision tooling — never expose to public/reviewers
+benchmarking/scripts/generate_response_letter.py
+
+# Demo/worked-example scripts — local only (reference local data, no manuscript content)
+benchmarking/scripts/worked_example_tp53.py
+
+# Local environment / secrets — NEVER commit
+.env
+.env.*
+*.env
+.envrc

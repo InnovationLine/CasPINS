@@ -62,7 +62,7 @@ def plot_indel_analysis_multi(control_file, edited_file, output_dir, gene_name,
     Returns:
         str: Path to saved plot
     """
-    from .ab1_parser import parse_ab1
+    from.ab1_parser import parse_ab1
     
     # Parse AB1 files
     control_seq, control_traces_raw = parse_ab1(control_file)

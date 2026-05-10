@@ -10,7 +10,9 @@
         "ensembl_name": "homo_sapiens",
         "assemblies": [
           {"name": "GRCh38", "alias": "hg38", "default": true, "ensembl_version": "110"},
-          {"name": "GRCh37", "alias": "hg19", "default": false, "ensembl_version": "75"}
+          {"name": "GRCh37", "alias": "hg19", "default": false, "ensembl_version": "75"},
+          {"name": "T2T-CHM13v2.0", "alias": "hs1", "default": false, "ensembl_version": "110"},
+          {"name": "HG002", "alias": "hg002", "default": false, "ensembl_version": "110"}
         ],
         "ncbi_taxonomy_id": 9606,
         "refseq_assembly": "GCF_000001405.40"

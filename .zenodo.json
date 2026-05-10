@@ -1,10 +1,10 @@
 {
-    "title": "CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis",
-    "description": "CasPINS (Cas-Primer-Indel Suite) is a comprehensive, open-source platform for CRISPR/TALEN gRNA design, primer design, and indel analysis. Features both graphical and command-line interfaces for analyzing genome editing outcomes from Sanger sequencing data.",
+    "title": "CasPINS: An Integrated Web-Based Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Decomposition Analysis",
+    "description": "CasPINS (Cas-Primer-Indel Suite) v2.0 is an open-source, unified platform that integrates the complete genome editing computational workflow — gRNA design, TALEN design, primer engineering, and indel decomposition analysis — into a single interactive web application built with Streamlit. It supports 90+ species, 14 CRISPR-Cas variants, six editing modes (including CRISPRa and CRISPRi), Ensembl/NCBI database integration, and NNLS-based Sanger trace decomposition with R² quality reporting. This version accompanies the manuscript revision submitted to Bioinformatics Advances (BIOADV-2026-089-R1).",
     "creators": [
         {
             "name": "Dasgupta, Rinki",
-            "affiliation": "Department of Psychiatry and Neuroscience, Dell Medical Center at University of Texas at Austin",
+            "affiliation": "Department of Psychiatry and Neuroscience, Dell Medical Center at University of Texas at Austin; Department of Biology, Texas Woman's University",
             "orcid": "0009-0008-5478-840X"
         },
         {
@@ -20,10 +20,14 @@
         "primer design",
         "indel analysis",
         "Sanger sequencing",
-        "gene editing",
+        "genome editing",
         "bioinformatics",
         "trace decomposition",
-        "CasPINS"
+        "NNLS",
+        "CasPINS",
+        "CRISPRa",
+        "CRISPRi",
+        "off-target estimation"
     ],
     "license": "MIT",
     "upload_type": "software",
@@ -35,12 +39,13 @@
             "scheme": "url"
         }
     ],
-    "version": "1.0.0",
+    "version": "2.0.0-rc1",
     "language": "eng",
-    "notes": "CasPINS was developed for comprehensive genome editing experiment design and analysis, supporting both CRISPR and TALEN systems.",
+    "notes": "Version 2.0.0-rc1 corresponds to the R1 revision of manuscript BIOADV-2026-089 submitted to Bioinformatics Advances. Changes from v1.0.0 include: species/assembly validation, CRISPRa/CRISPRi editing modes, R-squared correction toggle for indel analysis, structured run logging, T2T-CHM13v2.0 and HG002 genome assemblies, session-state persistence across GUI tabs, updated DEPLOYMENT_GUIDE, and removal of obsolete artefacts.",
     "references": [
-        "Doench et al. (2016) Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology",
-        "Moreno-Mateos et al. (2015) CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nature Methods",
-        "Brinkman et al. (2014) Easy quantitative assessment of genome editing by sequence trace decomposition. Nucleic Acids Research"
+        "Doench et al. (2016) Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology 34:184-191",
+        "Moreno-Mateos et al. (2015) CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nature Methods 12:982-988",
+        "Brinkman et al. (2014) Easy quantitative assessment of genome editing by sequence trace decomposition. Nucleic Acids Research 42:e168",
+        "Untergasser et al. (2012) Primer3 — new capabilities and interfaces. Nucleic Acids Research 40:e115"
     ]
-} 
+}

@@ -3,7 +3,10 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18370068.svg)](https://doi.org/10.5281/zenodo.18370068)
+[![Version DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20113099-blue)](https://doi.org/10.5281/zenodo.20113099)
 [![CI](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml/badge.svg)](https://github.com/InnovationLine/CasPINS/actions/workflows/ci.yml)
+
+> **Version 2.0** — This branch (`paper-revision-bioadv-r1`) contains the revised codebase submitted alongside manuscript BIOADV-2026-089-R1 to *Bioinformatics Advances*. Archived on Zenodo: [doi:10.5281/zenodo.20113099](https://doi.org/10.5281/zenodo.20113099)
 
 **CasPINS** is a comprehensive, integrated platform for CRISPR/TALEN gRNA design, primer design, and indel analysis with both **GUI** and **command-line** interfaces.
 
@@ -21,26 +24,45 @@ The tool is **completely generic** - it works with any gene from any species. Si
 
 ## 🚀 Quick Start
 
-### Option 1: Graphical User Interface (GUI) - Recommended
+> **Important:** The software described in the manuscript is version **v2.0.0-rc1**.
+> The `main` branch contains the original v1 code.
+> Always use one of the two methods below to get the correct version.
+
+### Method A — Download from Zenodo (no git required, easiest)
+
+1. Go to **https://doi.org/10.5281/zenodo.20113099**
+2. Click **Download** → `InnovationLine/CasPINS-v2.0.0-rc1.zip`
+3. Unzip, then open a terminal inside the `CasPINS-v2.0.0-rc1` folder:
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Launch the GUI
 python run.py gui
-
-# Or on Windows: double-click run_gui.bat
 ```
 
-The GUI opens in your web browser and provides an intuitive interface for all features.
-
-### Option 2: Command Line Interface (CLI)
+### Method B — Clone from GitHub (requires git)
 
 ```bash
-# Setup
+# Step 1: Clone the specific version (v2.0.0-rc1)
+git clone --branch v2.0.0-rc1 https://github.com/InnovationLine/CasPINS.git
+
+# Step 2: Enter the directory that was just created
+cd CasPINS
+
+# Step 3: Install dependencies (must be inside the CasPINS folder)
 pip install -r requirements.txt
 
+# Step 4: Launch the GUI
+python run.py gui
+# On Windows: double-click run_gui.bat
+```
+
+The GUI opens automatically in your web browser at **http://localhost:8501**.
+
+### Command Line Interface (CLI) — optional
+
+After completing Method A or B above (so you are inside the CasPINS directory with dependencies installed):
+
+```bash
 # View all available commands
 python run.py --help
 
@@ -117,7 +139,7 @@ CasPINS/
 ├── docs/                    # Documentation
 │   ├── workflow_guide.md
 │   ├── grna_finding_guide.md
-│   └── ...
+│   └──...
 ├── tests/                   # Test suite
 └── src/                     # Source code
     ├── cli/                 # Command-line tools
@@ -145,7 +167,7 @@ your_data_directory/         # Set via GUI Settings or CRISPR_DATA_DIR env var
 │       ├── control.ab1      # Control/wild-type sample
 │       └── edited*.ab1      # Edited samples (any number)
 └── another_gene/
-    └── ...
+    └──...
 ```
 
 ## 🔧 Usage Examples
@@ -164,14 +186,14 @@ python run.py grna TP53 --save-to data/tp53/grna.txt
 
 ```bash
 # Design primers for TP53
-python run.py primers TP53 --data-dir ./data
+python run.py primers TP53 --data-dir./data
 ```
 
 ### Run Indel Analysis
 
 ```bash
 # Analyze all genes with input data
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 
 # The pipeline automatically:
 # 1. Finds all gene folders with control.ab1 and edited*.ab1 files
@@ -205,7 +227,7 @@ echo "ACGTACGTACGTACGTACGT" > data/your_gene/grna.txt
 # data/your_gene/input/edited*.ab1
 
 # 5. Run analysis
-python run.py analysis --data-dir ./data
+python run.py analysis --data-dir./data
 ```
 
 ## 📖 Documentation
@@ -228,9 +250,12 @@ Our indel analysis uses **Non-Negative Least Squares (NNLS)** decomposition:
 ### Local Installation (Recommended)
 
 ```bash
-# Clone the repository
-git clone https://github.com/InnovationLine/CasPINS.git
+# Clone the specific version used in the manuscript (v2.0.0-rc1)
+git clone --branch v2.0.0-rc1 https://github.com/InnovationLine/CasPINS.git
 cd CasPINS
+
+# Or download directly from Zenodo (no git required):
+# https://doi.org/10.5281/zenodo.20113099
 
 # Create virtual environment (optional but recommended)
 python -m venv caspins_env
@@ -244,30 +269,29 @@ pip install -r requirements.txt
 python run.py gui
 ```
 
-### PyPI Installation (Planned)
+### PyPI Installation (Future)
 
-> **Note:** PyPI package publication is planned for a future release.
-
-```bash
-# Coming soon:
-pip install caspins
-caspins-gui
-```
+> **Note:** PyPI publication is planned for a future release. Use the local installation method above in the meantime.
 
 ## 📚 Citation
 
 If you use this software in your research, please cite:
 
 ```bibtex
-@software{caspins,
-  author = {Dasgupta, Rinki and Das, Kaushik},
-  title = {CasPINS: An Integrated Platform for CRISPR/TALEN gRNA Design, Primer Generation, and Indel Analysis},
-  year = {2026},
+@software{caspins2026,
+  author    = {Dasgupta, Rinki and Das, Kaushik},
+  title     = {CasPINS: An Integrated Web-Based Platform for CRISPR/TALEN gRNA Design,
+               Primer Generation, and Indel Decomposition Analysis},
+  year      = {2026},
   publisher = {Zenodo},
-  url = {https://github.com/InnovationLine/CasPINS},
-  doi = {10.5281/zenodo.18370068}
+  version   = {2.0.0-rc1},
+  url       = {https://github.com/InnovationLine/CasPINS},
+  doi       = {10.5281/zenodo.20113099}
 }
 ```
+
+> **Concept DOI** (always resolves to the latest version): `10.5281/zenodo.18370068`
+> **Version DOI** (v2.0.0-rc1, used in the manuscript): `10.5281/zenodo.20113099`
 
 ## 🤝 Contributing
 

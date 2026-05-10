@@ -8,7 +8,7 @@ from scipy import signal, optimize
 from scipy.optimize import nnls
 
 
-def decompose_traces_indel_analysis(control_traces, edited_traces, cut_site, window_size=50):
+def decompose_traces_indel_analysis(control_traces, edited_traces, cut_site, window_size=50, r_squared_correction=True):
     """
     Implement trace decomposition algorithm for indel analysis.
     Decomposes edited trace into sum of deletion/insertion traces using NNLS.
@@ -113,18 +113,6 @@ def decompose_traces_indel_analysis(control_traces, edited_traces, cut_site, win
             else:
                 indel_spectrum[indel_size] = round(fraction * 100, 1)
     
-    # Calculate editing efficiency (100% - WT%)
-    editing_efficiency = round((1 - wt_fraction) * 100, 1)
-    
-    # Find dominant indel
-    if indel_spectrum:
-        dominant_indel = max(indel_spectrum.items(), key=lambda x: x[1])
-        dominant_indel_size = dominant_indel[0]
-        dominant_indel_percent = dominant_indel[1]
-    else:
-        dominant_indel_size = 0
-        dominant_indel_percent = 0.0
-    
     # Calculate quality score based on how well the model fits
     if len(edited_signal) > 0:
         reconstructed = np.dot(A, coefficients)
@@ -136,6 +124,27 @@ def decompose_traces_indel_analysis(control_traces, edited_traces, cut_site, win
         quality_score = round(max(0, r_squared * 100), 1)
     else:
         quality_score = 0.0
+        r_squared = 0.0
+    
+    # Calculate editing efficiency (100% - WT%)
+    editing_efficiency = round((1 - wt_fraction) * 100, 1)
+    
+    # Apply R-squared correction if requested (aligns with TIDE/ICE behavior on noisy data)
+    if r_squared_correction:
+        r2_factor = max(0, r_squared)
+        editing_efficiency = round(editing_efficiency * r2_factor, 1)
+        for k in indel_spectrum:
+            indel_spectrum[k] = round(indel_spectrum[k] * r2_factor, 1)
+        wt_fraction = 1.0 - (editing_efficiency / 100.0)
+    
+    # Find dominant indel
+    if indel_spectrum:
+        dominant_indel = max(indel_spectrum.items(), key=lambda x: x[1])
+        dominant_indel_size = dominant_indel[0]
+        dominant_indel_percent = dominant_indel[1]
+    else:
+        dominant_indel_size = 0
+        dominant_indel_percent = 0.0
     
     # Determine confidence based on quality and efficiency
     if quality_score > 80 and editing_efficiency > 10:
