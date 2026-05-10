@@ -1,4 +1,24 @@
-# CasPINS - Developer Guide
+# CasPINS – Developer Guide
+
+> **Version:** v2.0.0-rc1 | **Zenodo DOI:** [10.5281/zenodo.20113099](https://doi.org/10.5281/zenodo.20113099)
+
+## Setup for Development
+
+```bash
+# Clone the revision branch (v2 code)
+git clone --branch v2.0.0-rc1 https://github.com/InnovationLine/CasPINS.git
+cd CasPINS
+
+# Create a virtual environment
+python -m venv caspins_env
+source caspins_env/bin/activate    # Linux/macOS
+# caspins_env\Scripts\activate     # Windows
+
+pip install -r requirements.txt
+python run.py gui
+```
+
+---
 
 ## Architecture Overview
 
@@ -167,15 +187,16 @@ python -m pytest tests/test_grna_design.py -v
 ### Local
 ```bash
 python run.py gui
+# On Windows: double-click run_gui.bat
 ```
-
-### Streamlit Cloud
-Set main file to: `src/gui/streamlit_entry.py`
 
 ### Docker
 ```bash
 docker-compose up
+# Access at http://localhost:8501
 ```
+
+See `DEPLOYMENT_GUIDE.md` for full deployment options including Nginx, systemd, and HPC/Slurm.
 
 ---
 

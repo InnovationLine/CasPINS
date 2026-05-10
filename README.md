@@ -24,26 +24,45 @@ The tool is **completely generic** - it works with any gene from any species. Si
 
 ## 🚀 Quick Start
 
-### Option 1: Graphical User Interface (GUI) - Recommended
+> **Important:** The software described in the manuscript is version **v2.0.0-rc1**.
+> The `main` branch contains the original v1 code.
+> Always use one of the two methods below to get the correct version.
+
+### Method A — Download from Zenodo (no git required, easiest)
+
+1. Go to **https://doi.org/10.5281/zenodo.20113099**
+2. Click **Download** → `InnovationLine/CasPINS-v2.0.0-rc1.zip`
+3. Unzip, then open a terminal inside the `CasPINS-v2.0.0-rc1` folder:
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Launch the GUI
 python run.py gui
-
-# Or on Windows: double-click run_gui.bat (provided in the repository)
 ```
 
-The GUI opens in your web browser and provides an intuitive interface for all features.
-
-### Option 2: Command Line Interface (CLI)
+### Method B — Clone from GitHub (requires git)
 
 ```bash
-# Setup
+# Step 1: Clone the specific version (v2.0.0-rc1)
+git clone --branch v2.0.0-rc1 https://github.com/InnovationLine/CasPINS.git
+
+# Step 2: Enter the directory that was just created
+cd CasPINS
+
+# Step 3: Install dependencies (must be inside the CasPINS folder)
 pip install -r requirements.txt
 
+# Step 4: Launch the GUI
+python run.py gui
+# On Windows: double-click run_gui.bat
+```
+
+The GUI opens automatically in your web browser at **http://localhost:8501**.
+
+### Command Line Interface (CLI) — optional
+
+After completing Method A or B above (so you are inside the CasPINS directory with dependencies installed):
+
+```bash
 # View all available commands
 python run.py --help
 
@@ -54,7 +73,7 @@ python run.py grna TP53 --species human --top 10
 python run.py primers TP53
 
 # Run indel analysis
-python run.py analysis --data-dir./data
+python run.py analysis --data-dir ./data
 ```
 
 ## 🖥️ GUI Features
@@ -231,9 +250,12 @@ Our indel analysis uses **Non-Negative Least Squares (NNLS)** decomposition:
 ### Local Installation (Recommended)
 
 ```bash
-# Clone the repository
-git clone https://github.com/InnovationLine/CasPINS.git
+# Clone the specific version used in the manuscript (v2.0.0-rc1)
+git clone --branch v2.0.0-rc1 https://github.com/InnovationLine/CasPINS.git
 cd CasPINS
+
+# Or download directly from Zenodo (no git required):
+# https://doi.org/10.5281/zenodo.20113099
 
 # Create virtual environment (optional but recommended)
 python -m venv caspins_env

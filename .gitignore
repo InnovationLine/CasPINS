@@ -126,6 +126,9 @@ context.md
 # Private revision tooling — never expose to public/reviewers
 benchmarking/scripts/generate_response_letter.py
 
+# Demo/worked-example scripts — local only (reference local data, no manuscript content)
+benchmarking/scripts/worked_example_tp53.py
+
 # Local environment / secrets — NEVER commit
 .env
 .env.*

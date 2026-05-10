@@ -52,13 +52,13 @@ COLORS = {
 }
 
 plt.rcParams.update({
-    'font.family': 'DejaVu Sans',
-    'font.size': 9,
-    'axes.titlesize': 10,
-    'axes.labelsize': 9,
-    'xtick.labelsize': 8,
-    'ytick.labelsize': 8,
-    'legend.fontsize': 8,
+    'font.family': 'Times New Roman',
+    'font.size': 12,
+    'axes.titlesize': 12,
+    'axes.labelsize': 12,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
     'figure.dpi': 300,
     'savefig.dpi': 300,
     'savefig.bbox': 'tight',
@@ -110,7 +110,7 @@ def load_stage_breakdown():
 
 # ── Figure 1: Workflow Schematic ───────────────────────────────────────────────
 
-def make_box(ax, x, y, w, h, label, sublabel='', color=COLORS['blue'], fontsize=9,
+def make_box(ax, x, y, w, h, label, sublabel='', color=COLORS['blue'], fontsize=12,
              face_alpha=0.15, label_color=None, sublabel_color='#222222'):
     box = FancyBboxPatch((x - w/2, y - h/2), w, h,
                          boxstyle='round,pad=0.03',
@@ -119,12 +119,12 @@ def make_box(ax, x, y, w, h, label, sublabel='', color=COLORS['blue'], fontsize=
     ax.add_patch(box)
     if label_color is None:
         label_color = color
-    ax.text(x, y + (0.015 if sublabel else 0), label,
+    ax.text(x, y + (0.040 if sublabel else 0), label,
             ha='center', va='center', fontsize=fontsize,
             fontweight='bold', color=label_color)
     if sublabel:
-        ax.text(x, y - 0.04, sublabel,
-                ha='center', va='center', fontsize=7.5, color=sublabel_color, fontweight='medium')
+        ax.text(x, y - 0.045, sublabel,
+                ha='center', va='center', fontsize=12, color=sublabel_color, fontweight='medium')
 
 
 def arrow(ax, x1, y1, x2, y2, color='#555555', alpha=1.0):
@@ -136,40 +136,41 @@ def arrow(ax, x1, y1, x2, y2, color='#555555', alpha=1.0):
 def dashed_box(ax, x, y, w, h, label, color='#888888'):
     box = FancyBboxPatch((x - w/2, y - h/2), w, h,
                          boxstyle='round,pad=0.02',
-                         facecolor='#F8F8F8',
+                         facecolor=(1, 1, 1, 0),
                          edgecolor=color, linewidth=1.0,
                          linestyle='--')
     ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=7.5,
+    ax.text(x, y, label, ha='center', va='center', fontsize=12,
             color='#333333', style='italic')
 
 
 def fig1_workflow():
     """Figure 1: clean, non-overlapping workflow schematic."""
-    fig, ax = plt.subplots(figsize=(10.5, 7.0))
+    fig, ax = plt.subplots(figsize=(11.5, 8.2))
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis('off')
 
     # Title
     ax.text(0.5, 0.995, 'CasPINS Integrated Genome Editing Workflow',
-            ha='center', va='top', fontsize=15, fontweight='bold')
+            ha='center', va='top', fontsize=12, fontweight='bold')
 
     # ── Top input/database layer ──
-    input_x, input_y, input_w, input_h = 0.5, 0.86, 0.78, 0.080
+    input_x, input_y, input_w, input_h = 0.5, 0.875, 0.78, 0.120
     make_box(ax, input_x, input_y, input_w, input_h,
              'INPUT',
              'Gene symbol · Ensembl ID · RefSeq ID · Genomic coordinates · Sequence',
-             color='#1F2933', fontsize=10, face_alpha=0.92,
+             color='#1F2933', fontsize=12, face_alpha=0.92,
              label_color='white', sublabel_color='white')
-    dashed_box(ax, 0.5, 0.745, 0.56, 0.060,
+    db_x, db_y, db_w, db_h = 0.5, 0.755, 0.56, 0.045
+    dashed_box(ax, db_x, db_y, db_w, db_h,
                'Database retrieval: Ensembl REST API · NCBI E-utilities')
     # Input -> database: bottom edge of input to top edge of database box
-    arrow(ax, 0.5, input_y - input_h/2, 0.5, 0.745 + 0.060/2)
+    arrow(ax, 0.5, input_y - input_h/2, 0.5, db_y + db_h/2)
 
     # ── Module boxes ──
-    box_y = 0.60
-    box_h = 0.16
+    box_y = 0.54
+    box_h = 0.24
     box_w = 0.19
     positions = [0.12, 0.37, 0.63, 0.88]
     labels    = ['gRNA\nDesign', 'TALEN\nDesign', 'Primer\nDesign', 'Indel\nAnalysis']
@@ -179,19 +180,19 @@ def fig1_workflow():
                  'NNLS traces\nSingle + batch\nR² confidence']
     mod_colors = [COLORS['blue'], COLORS['orange'], COLORS['green'], COLORS['purple']]
 
-    db_bottom = 0.745 - 0.060/2
+    db_bottom = db_y - db_h/2
     module_top = box_y + box_h/2
     for xp, lb, sl, col in zip(positions, labels, sublabels, mod_colors):
-        make_box(ax, xp, box_y, box_w, box_h, lb, sl, color=col, fontsize=10)
+        make_box(ax, xp, box_y, box_w, box_h, lb, sl, color=col, fontsize=12)
         # Database -> module: bottom of database band to top edge of module box
         arrow(ax, xp, db_bottom, xp, module_top, color=col)
 
     # ── Shared project state / hand-off box ──
-    shared_x, shared_y, shared_w, shared_h = 0.5, 0.34, 0.90, 0.105
+    shared_x, shared_y, shared_w, shared_h = 0.5, 0.285, 0.90, 0.12
     make_box(ax, shared_x, shared_y, shared_w, shared_h,
              'SHARED PROJECT STATE',
              'selected gRNA · TALEN spacer / cut site · genomic coordinates · run metadata',
-             color='#34495E', fontsize=9, face_alpha=0.92,
+             color='#34495E', fontsize=12, face_alpha=0.92,
              label_color='white', sublabel_color='white')
 
     # Clear module → shared-state arrows. Each starts at a module bottom edge and
@@ -203,11 +204,11 @@ def fig1_workflow():
         arrow(ax, xp, module_bottom, xp, shared_top, color=col, alpha=0.95)
 
     # ── Output box ──
-    output_x, output_y, output_w, output_h = 0.5, 0.105, 0.78, 0.09
+    output_x, output_y, output_w, output_h = 0.5, 0.075, 0.78, 0.11
     make_box(ax, output_x, output_y, output_w, output_h,
              'OUTPUT',
              'Ranked gRNAs · TALEN pairs · Primer sets · Editing efficiency · Indel spectrum · Run logs',
-             color='#5B2C6F', fontsize=9.5, face_alpha=0.92,
+             color='#5B2C6F', fontsize=12, face_alpha=0.92,
              label_color='white', sublabel_color='white')
 
     # Shared state → output arrow
@@ -220,7 +221,7 @@ def fig1_workflow():
                for c, l in zip(mod_colors, ['gRNA Design', 'TALEN Design',
                                             'Primer Design', 'Indel Analysis'])]
     ax.legend(handles=handles, loc='lower center', bbox_to_anchor=(0.5, -0.04),
-              fontsize=8.5, framealpha=0.95, ncol=4, columnspacing=1.5)
+              fontsize=12, framealpha=0.95, ncol=4, columnspacing=1.5)
 
     fig.subplots_adjust(left=0.03, right=0.97, top=0.96, bottom=0.12)
     return fig
@@ -262,21 +263,21 @@ def fig2_grna_benchmark():
     for bar in list(bars1) + list(bars2):
         h = bar.get_height()
         ax_a.text(bar.get_x() + bar.get_width()/2, h + 0.8,
-                  f'{h:.0f}%', ha='center', va='bottom', fontsize=7.5)
+                  f'{h:.0f}%', ha='center', va='bottom', fontsize=12)
 
     # Mean lines (values are listed in legend to avoid text collisions)
     ax_a.axhline(mean_cho, color=COLORS['blue'], linestyle='--', lw=0.9, alpha=0.6)
     ax_a.axhline(mean_cri, color=COLORS['orange'], linestyle='--', lw=0.9, alpha=0.6)
 
     ax_a.set_xticks(x)
-    ax_a.set_xticklabels(genes, fontsize=8.5)
+    ax_a.set_xticklabels(genes, fontsize=12)
     ax_a.set_ylabel('gRNAs recovered (%)')
     ax_a.set_ylim(0, 100)
     ax_a.set_title('A  Full-gene concordance\n(CasPINS vs CHOPCHOP and CRISPOR)',
                    loc='center', pad=12)
     handles_a, labels_a = ax_a.get_legend_handles_labels()
     ax_a_leg.legend(handles_a, labels_a, loc='center left', framealpha=0.95,
-                    title='Concordance', fontsize=8)
+                    title='Concordance', fontsize=12)
     ax_a.grid(axis='y', alpha=0.2, linewidth=0.6)
 
     # ── Panel B: Stage breakdown stacked bars ─────────────────────────────
@@ -290,7 +291,7 @@ def fig2_grna_benchmark():
             if v > 4:
                 text_color = 'white' if cat == 'REFERENCE_DATABASE_DIFFERENCE' else '#111111'
                 ax_b.text(i, b + v/2, f'{v:.0f}%', ha='center', va='center',
-                          fontsize=7, color=text_color)
+                          fontsize=12, color=text_color)
         bottom += vals
 
     ax_b.set_ylabel('% of missed gRNAs')
@@ -299,14 +300,14 @@ def fig2_grna_benchmark():
                    loc='center', pad=12)
     ax_b.grid(axis='y', alpha=0.2, linewidth=0.6)
     handles_b, labels_b = ax_b.get_legend_handles_labels()
-    ax_b_leg.legend(handles_b, labels_b, loc='center left', fontsize=8,
+    ax_b_leg.legend(handles_b, labels_b, loc='center left', fontsize=12,
                     ncol=1, framealpha=0.95, title='Discordance category')
 
     # Annotation
     ax_b.text(0.5, -0.19,
               'Region scanning difference = 0% across all genes',
               ha='center', va='top', transform=ax_b.transAxes,
-              fontsize=7.5, color=COLORS['green'], fontweight='bold',
+              fontsize=12, color=COLORS['green'], fontweight='bold',
               style='italic')
 
     return fig
@@ -334,7 +335,7 @@ def fig3_indel_benchmark():
                     alpha=0.85, edgecolor='white', linewidth=0.5, width=0.5)
     for bar, v in zip(bars, gold_eff):
         ax_a.text(bar.get_x() + bar.get_width()/2, v + 0.3,
-                  f'{v:.1f}%', ha='center', va='bottom', fontsize=9)
+                  f'{v:.1f}%', ha='center', va='bottom', fontsize=12)
 
     ax_a.set_ylabel('Editing efficiency (%)')
     ax_a.set_ylim(0, 50)
@@ -344,7 +345,7 @@ def fig3_indel_benchmark():
                  alpha=0.12, zorder=0)
     ax_a.annotate('2.6 percentage-point range',
                   xy=(1.0, 35.0), xytext=(1.0, 43.5),
-                  ha='center', va='center', fontsize=8,
+                  ha='center', va='center', fontsize=12,
                   arrowprops=dict(arrowstyle='-[,widthB=3.6,lengthB=0.5',
                                   color=COLORS['grey'], lw=1.0),
                   color='#555555')
@@ -352,7 +353,7 @@ def fig3_indel_benchmark():
     # R² values
     for i, (tool, r2) in enumerate(zip(gold_tools, [0.666, 0.977, 0.965])):
         ax_a.text(i, 2.0, f'R²={r2:.3f}', ha='center', va='bottom',
-                  fontsize=7, color='#555555')
+                  fontsize=12, color='#555555')
     ax_a.grid(axis='y', alpha=0.2, linewidth=0.6)
 
     # ── Panel B: DDC noisy data comparison ───────────────────────────────
@@ -361,10 +362,10 @@ def fig3_indel_benchmark():
                       alpha=0.85, edgecolor='white', linewidth=0.5, width=0.6)
     for bar, v in zip(bars_b, ddc_eff):
         ax_b.text(bar.get_x() + bar.get_width()/2, v + 0.8,
-                  f'{v:.1f}%', ha='center', va='bottom', fontsize=9)
+                  f'{v:.1f}%', ha='center', va='bottom', fontsize=12)
 
     ax_b.set_xticks(x)
-    ax_b.set_xticklabels(ddc_tools, fontsize=8)
+    ax_b.set_xticklabels(ddc_tools, fontsize=12)
     ax_b.set_ylabel('Mean editing efficiency (%)')
     ax_b.set_ylim(0, 100)
     ax_b.set_title('B  DDC dataset (challenging traces, n=8)\n'
@@ -378,7 +379,7 @@ def fig3_indel_benchmark():
     ax_b2.set_ylabel('R² (goodness-of-fit)', color=COLORS['red'])
     ax_b2.tick_params(axis='y', colors=COLORS['red'])
     ax_b2.spines['right'].set_edgecolor(COLORS['red'])
-    ax_b2.legend(loc='upper right', fontsize=8, framealpha=0.95)
+    ax_b2.legend(loc='upper right', fontsize=12, framealpha=0.95)
 
     # Quality warning annotation
     ax_b.axhline(0, color='black', lw=0.5)
@@ -386,7 +387,7 @@ def fig3_indel_benchmark():
     ax_b.text(0.5, -0.19,
               'All R² < 0.3 → CasPINS v2.0 displays quality warning',
               ha='center', va='top', transform=ax_b.transAxes,
-              fontsize=7.5, color=COLORS['red'], style='italic')
+              fontsize=12, color=COLORS['red'], style='italic')
 
     return fig
 
